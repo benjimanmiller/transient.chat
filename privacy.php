@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ephemera - Privacy Statement</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="wrap">
+        <?php session_start(); ?>
+        <?php include 'header.php'; ?>
+        <?php include 'sidebar-left.php'; ?>
+        <?php include 'sidebar-right.php'; ?>
+        <?php include 'popup-status.php'; ?>
+        
+        <div class="content">
+            <div class="container">
+                <h1>Privacy</h1>
+                <br>
+                <p>
+                    Privacy Statement
+                </p>
+                <br>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
