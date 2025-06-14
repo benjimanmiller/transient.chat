@@ -1,0 +1,11 @@
+{
+    "name": "ben/ephemera",
+    "description": "An Ephemeral Message Board",
+    "authors": [
+        {
+            "name": "Ben Miller",
+            "email": "benjimanmiller@gmail.com"
+        }
+    ],
+    "require": {}
+}
