@@ -19,7 +19,7 @@
             <div class="container">
                 <h1>Login</h1>
                 <br>
-                <form action="backend/login-process.php" method="post">
+                <form action="login.php" method="post">
                     <label for="username">Username:</label>
                     <input type="username" name="username" required>
                     <input type="submit" value="Login">

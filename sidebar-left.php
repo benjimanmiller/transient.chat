@@ -17,7 +17,7 @@
                 <li><a href="contact.php">Contact</a></li>
                 <li><a href="privacy.php">Privacy Statement</a></li>
             <?php endif; ?>
-            <li><a href="backend/logout.php">Log Out</a></li>
+            <li><a href="logout.php">Log Out</a></li>
         <?php else : ?>
             <!-- Links for non-logged-in users -->
             <li><a href="index.php">Login</a></li>
