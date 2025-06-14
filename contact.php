@@ -21,10 +21,10 @@
                 <h1>Contact</h1>
                 <br>
                 <p>
-                    <a href="https://www.facebook.com/benjiman.miller.1"><img src="../img/facebook-icon.png" class="post-img" /></a>
-                    <a href="https://twitter.com/benjimantmiller"><img src="../img/twitter-icon.png" class="post-img" /></a>
-                    <a href="https://www.instagram.com/benjimanmiller/"><img src="../img/Instagram-icon.png" class="post-img"></a>
-                    <a href="https://www.linkedin.com/in/benjiman-miller-923394ab"><img src="../img/linkedin-icon.png" class="post-img"></a>
+                    <a href="https://www.facebook.com/benjiman.miller.1"><img src="img/facebook-icon.png" class="post-img" /></a>
+                    <a href="https://twitter.com/benjimantmiller"><img src="img/twitter-icon.png" class="post-img" /></a>
+                    <a href="https://www.instagram.com/benjimanmiller/"><img src="img/Instagram-icon.png" class="post-img"></a>
+                    <a href="https://www.linkedin.com/in/benjiman-miller-923394ab"><img src="img/linkedin-icon.png" class="post-img"></a>
                 </p>
                 <br>
             </div>

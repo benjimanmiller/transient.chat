@@ -2,6 +2,6 @@
 session_start();
 $_SESSION = array();
 session_destroy();
-header("Location: ../index.php?success=Logged Out");
+header("Location: index.php?success=Logged Out");
 exit();
 ?>

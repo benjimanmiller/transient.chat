@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ephemera - Login</title>
+    <title>Ephemera - Boards</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -14,8 +14,8 @@
         <?php include 'header.php'; ?>
         <?php include 'sidebar-left.php'; ?>
         <?php include 'sidebar-right.php'; ?>
-        <?php include 'check-login.php'; ?>
-        
+        <?php include 'popup-status.php'; ?>
+       
         <div class="content">
             <div class="container">
                 <h1>The Boards</h1>

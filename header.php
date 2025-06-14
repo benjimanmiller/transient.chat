@@ -4,3 +4,5 @@
         <p>I don't really think everything has be remembered.</p>
     </div>
 </header>
+
+<script src="js/utils.js"></script>

@@ -14,13 +14,14 @@
         <?php include 'header.php'; ?>
         <?php include 'sidebar-left.php'; ?>
         <?php include 'sidebar-right.php'; ?>
-        
+        <?php include 'popup-status.php'; ?>
+
         <div class="content">
             <div class="container">
-                <h1>Login</h1>
+                <h1>Welcome In! Pick a Username</h1>
                 <br>
                 <form action="login.php" method="post">
-                    <label for="username">Username:</label>
+                    <label for="username">Username</label>
                     <input type="username" name="username" required>
                     <input type="submit" value="Login">
                 </form>

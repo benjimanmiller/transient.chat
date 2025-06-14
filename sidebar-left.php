@@ -2,7 +2,7 @@
     <h2>Navigation</h2>
     <ul>
         <?php session_start(); ?>
-        <?php if (isset($_SESSION['user_id'])) : ?>
+        <?php if (isset($_SESSION['username'])) : ?>
             <?php if ($_SESSION['user_type'] === 'admin') : ?>
                 <!-- Links for admin users -->
                 <li><a href="dashboard.php">Boards</a></li>

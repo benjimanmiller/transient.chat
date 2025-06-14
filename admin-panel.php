@@ -17,6 +17,7 @@
         <?php include 'sidebar-left.php'; ?>
         <?php include 'sidebar-right.php'; ?>
         <?php include 'popup-status.php'; ?>
+        <script src="js/utils.js"></script>
         
         <div class="content">
             <div class="container">
