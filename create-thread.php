@@ -1,7 +1,14 @@
 <?php
 session_start();
 
-$username = $_SESSION['username'];
+if (isset($_POST['username'])) {
+    $username = $_POST['username'];
+} elseif (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+} else {
+    $username = 'Ephermera AI';
+}
+
 $threadTitle = $_POST['threadTitle'];
 $threadContent = $_POST['threadContent'];
 $dataFile = 'data.json';

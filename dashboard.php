@@ -121,7 +121,7 @@
                         <tr>
                             <td>
                                 <a href="#" onclick="toggleThread('<?php echo $uniqueId; ?>'); return false;">
-                                    <?php echo htmlspecialchars($thread['threadTitle']); ?>
+                                    <?php echo $thread['threadTitle']; ?>
                                 </a>
                             </td>
                             <td><?php echo $timeLeft; ?></td>
