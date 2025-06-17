@@ -7,7 +7,7 @@
         <h1><a href="index.php">Ephemera</a></h1>
     <?php endif; ?>
     <div class="header-text">
-        <p>I don't really think everything has be remembered.</p>
+        <p>A Forum for the Momentary Present</p>
     </div>
 </header>
 

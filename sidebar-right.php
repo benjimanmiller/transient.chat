@@ -1,8 +1,6 @@
 <div class="sidebar-right">
     <h1>Blog</h2>
     <ul>
-        <li><a href="#">Article 1</a></li>
-        <li><a href="#">Article 2</a></li>
-        <li><a href="#">Article 3</a></li>
+        <li><a href="embracing_ephemera.php">Embracing Privacy and the Beauty of the Ephemeral</a></li>
     </ul>
 </div>
