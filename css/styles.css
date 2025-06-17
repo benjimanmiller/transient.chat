@@ -240,49 +240,15 @@ tr:hover {
     background-color: #3A4453;
 }
 
-.create-monitor-btn {
-    background-color: #27303f;
-    border: none;
-    color: #fff;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
+.hidden {
+    display: none;
 }
 
-.create-monitor-btn:hover {
-    background-color: #27303f;
-}
-
-.light-green {
-    background-color: lightgreen;
-}
-
-.light-red {
-    background-color: lightcoral;
-}
-
-.chart-container {
-    width: 65%;
-    height: 250px;
+.comment-date {
+    font-size: 0.8em;
+    /* Make the text smaller */
     float: right;
-    border: 2px solid #27303f;
-    background-color: #fff;
-    flex: 1;
-    align-items: flex-start;
-}
-
-.monitor-details-container {
-    display: flex;
-    align-items: flex-start;
-}
-
-.monitor-details {
-    flex: 1;
+    /* Align to the right */
 }
 
 html {
