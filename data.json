@@ -1,0 +1,40 @@
+[
+    {
+        "threadTitle": "Welcome to the Community",
+        "threadId": "1234",
+        "user": "Alice",
+        "content": "Hello, everyone! I'm new here. Looking forward to connecting with you all!",
+        "timestamp": "2025-06-16T14:48:00.000Z",
+        "comments": [
+            {
+                "user": "Bob",
+                "comment": "Hi, Alice! Welcome to the community!",
+                "timestamp": "2025-06-16T14:49:00.000Z"
+            },
+            {
+                "user": "Charlie",
+                "comment": "Glad to have you here, Alice!",
+                "timestamp": "2025-06-16T14:50:00.000Z"
+            }
+        ]
+    },
+    {
+        "threadTitle": "Favorite Programming Languages",
+        "threadId": "1234",
+        "user": "David",
+        "content": "What's your favorite programming language and why?",
+        "timestamp": "2025-06-16T15:00:00.000Z",
+        "comments": [
+            {
+                "user": "Eve",
+                "comment": "I love Python because of its simplicity and readability.",
+                "timestamp": "2025-06-16T15:05:00.000Z"
+            },
+            {
+                "user": "Frank",
+                "comment": "JavaScript, because it's versatile for both front-end and back-end development.",
+                "timestamp": "2025-06-16T15:10:00.000Z"
+            }
+        ]
+    }
+]

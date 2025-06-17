@@ -10,14 +10,12 @@
 
 <body>
     <div class="wrap">
-        <?php session_start(); ?>
         <?php include 'check-admin.php'; ?>
         <?php include 'check-login.php'; ?>
         <?php include 'header.php'; ?>
         <?php include 'sidebar-left.php'; ?>
         <?php include 'sidebar-right.php'; ?>
         <?php include 'popup-status.php'; ?>
-        <script src="js/utils.js"></script>
         
         <div class="content">
             <div class="container">

@@ -10,7 +10,6 @@
 
 <body>
     <div class="wrap">
-        <?php session_start(); ?>
         <?php include 'header.php'; ?>
         <?php include 'sidebar-left.php'; ?>
         <?php include 'sidebar-right.php'; ?>
@@ -18,11 +17,11 @@
 
         <div class="content">
             <div class="container">
-                <h1>Welcome In! Pick a Username</h1>
+                <h1>Welcome In!</h1>
                 <br>
                 <form action="login.php" method="post">
                     <label for="username">Username</label>
-                    <input type="username" name="username" required>
+                    <input type="text" name="username" required>
                     <input type="submit" value="Login">
                 </form>
 

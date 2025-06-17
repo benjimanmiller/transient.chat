@@ -6,3 +6,4 @@
 </header>
 
 <script src="js/utils.js"></script>
+<?php session_start(); ?>
