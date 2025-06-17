@@ -42,8 +42,15 @@
             <div class="container">
                 <?php
                 $username = $_SESSION["username"];
-                echo "<h1>Welcome to The Ephermera Board, $username.</h1><br>";
+                echo "<h1>Welcome to The Ephermera Board, $username.</h1>";
                 ?>
+                <ul>
+                    <li>Green boards have 12 to 8 hours left.</li>
+                    <li>Yellow boards have 8 to 4 hours left.</li>
+                    <li>Red boards have less than 4 hours left.</li>
+                    <li>If a board reaches 24 hours with no engagement, it gets deleted!</li>
+                    <li>If you logout or don't come back, your username gets recycled.</li>
+                </ul>
 
                 <!-- Create Thread Button and Form -->
                 <button onclick="toggleThreadForm()">Create a Thread</button>
@@ -111,14 +118,25 @@
                             $minutes = floor(($timeLeftInSeconds % 3600) / 60);
                             $seconds = $timeLeftInSeconds % 60;
                             $timeLeft = sprintf("%02d:%02d", $hours, $minutes,);
+                                    // Determine the class based on the time left
+                            $timeLeftClass = '';
+                            if ($timeLeftInSeconds <= 14400) { // 4 hours
+                                $timeLeftClass = 'time-left-red';
+                            } else if ($timeLeftInSeconds <= 28800) { // 8 hours
+                                $timeLeftClass = 'time-left-orange';
+                            } else if ($timeLeftInSeconds <= 43200) { // 12 hours
+                                $timeLeftClass = 'time-left-green';
+                            }
                         } else {
                             $timeLeft = "Expired";
+                            $timeLeftClass = 'expired'; // Optional class for expired threads
+
                         }
 
                         $formattedTimestamp = date("m/d/Y h:i A", $postTime);
                         $uniqueId = $thread['threadId'] . '-' . $index; // Ensure unique ID
                         ?>
-                        <tr>
+                        <tr class="<?php echo $timeLeftClass; ?>">
                             <td>
                                 <a href="#" onclick="toggleThread('<?php echo $uniqueId; ?>'); return false;">
                                     <?php echo $thread['threadTitle']; ?>

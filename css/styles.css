@@ -251,6 +251,19 @@ tr:hover {
     /* Align to the right */
 }
 
+table tr.time-left-green {
+    background-color: rgba(144, 238, 144, 0.5);
+}
+table tr.time-left-orange {
+    background-color: rgba(255, 165, 0, 0.5);
+}
+table tr.time-left-red {
+    background-color: rgba(255, 99, 71, 0.5);
+}
+table tr.expired {
+    background-color: rgba(211, 211, 211, 0.5);
+}
+
 ul {
     list-style-type: none; /* Removes bullet points from list items */
     padding-left: 0; /* Removes left padding */
