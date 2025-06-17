@@ -130,7 +130,7 @@
                             <td colspan="2">
                                 <strong>Posted by:</strong> <?php echo htmlspecialchars($thread['user']); ?> 
                                 <strong>Last Timestamp:</strong> <?php echo $formattedTimestamp; ?><br>
-                                <strong>Thread Post:</strong> <?php echo htmlspecialchars($thread['content']); ?><br><br>
+                                <strong>Thread Post:</strong> <?php echo $thread['content']; ?><br><br>
                                 <strong>Comments:</strong>
 
                                 <ul> <!-- Ensure this unordered list is present -->
