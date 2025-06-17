@@ -148,6 +148,7 @@
                                 <form class="commentForm" data-thread-id="<?php echo $thread['threadId']; ?>">
                                     <input type="hidden" name="threadId" value="<?php echo $thread['threadId']; ?>"> <!-- This input could be omitted since we're using the data attribute -->
                                     <textarea name="newComment" required></textarea>
+                                    <br>
                                     <button type="submit">Add Comment</button>
                                 </form>
                             </td>
