@@ -14,6 +14,7 @@
         <?php include 'sidebar-left.php'; ?>
         <?php include 'sidebar-right.php'; ?>
         <?php include 'popup-status.php'; ?>
+        <script src="js/dashboard.js"></script>
 
         <div class="content">
             <div class="container">
@@ -105,25 +106,22 @@
                             <td colspan="2">
                                 <strong>Posted by:</strong> <?php echo htmlspecialchars($thread['user']); ?><br>
                                 <strong>Last Timestamp:</strong> <?php echo $formattedTimestamp; ?><br>
-                                <strong>Content:</strong> <?php echo htmlspecialchars($thread['content']); ?><br>
+                                <strong>Content:</strong> <?php echo htmlspecialchars($thread['content']); ?><br><br>
                                 <strong>Comments:</strong>
-                                <ul>
-                                    <?php foreach ($thread['comments'] as $comment): ?>
-                                        <li>
-                                            <strong><?php echo htmlspecialchars($comment['user']); ?></strong>:
-                                            <?php echo htmlspecialchars($comment['comment']); ?>
-                                            <span class="comment-date">
-                                                <?php echo date("m/d/Y h:i A", strtotime($comment['timestamp'])); ?>
-                                            </span>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
+                                <?php foreach ($thread['comments'] as $comment): ?>
+                                    <li>
+                                        <strong><?php echo htmlspecialchars($comment['user']); ?></strong>:
+                                        <?php echo htmlspecialchars($comment['comment']); ?>
+                                        <span class="comment-date">
+                                            <?php echo date("m/d/Y h:i A", strtotime($comment['timestamp'])); ?>
+                                        </span>
+                                    </li>
+                                <?php endforeach; ?>
 
-                                <!-- Comment form -->
-                                <form method="post" action="add-comment.php">
-                                    <input type="hidden" name="threadId" value="<?php echo $thread['threadId']; ?>">
-                                    <input type="text" name="newComment" placeholder="Enter your comment..." required>
-                                    <button type="submit">Comment</button>
+                                <form class="commentForm" data-thread-id="<?php echo $thread['threadId']; ?>">
+                                    <input type="hidden" name="threadId" value="<?php echo $thread['threadId']; ?>"> <!-- This input could be omitted since we're using the data attribute -->
+                                    <textarea name="newComment" required></textarea>
+                                    <button type="submit">Add Comment</button>
                                 </form>
                             </td>
                         </tr>

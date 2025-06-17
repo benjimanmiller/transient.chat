@@ -251,6 +251,11 @@ tr:hover {
     /* Align to the right */
 }
 
+ul {
+    list-style-type: none; /* Removes bullet points from list items */
+    padding-left: 0; /* Removes left padding */
+}
+
 html {
     height: 100%;
 }
