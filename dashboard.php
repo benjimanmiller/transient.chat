@@ -104,9 +104,9 @@
                         </tr>
                         <tr id="<?php echo $uniqueId; ?>" class="hidden">
                             <td colspan="2">
-                                <strong>Posted by:</strong> <?php echo htmlspecialchars($thread['user']); ?><br>
+                                <strong>Posted by:</strong> <?php echo htmlspecialchars($thread['user']); ?> 
                                 <strong>Last Timestamp:</strong> <?php echo $formattedTimestamp; ?><br>
-                                <strong>Content:</strong> <?php echo htmlspecialchars($thread['content']); ?><br><br>
+                                <strong>Thread Post:</strong> <?php echo htmlspecialchars($thread['content']); ?><br><br>
                                 <strong>Comments:</strong>
 
                                 <ul> <!-- Ensure this unordered list is present -->
