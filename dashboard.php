@@ -108,15 +108,18 @@
                                 <strong>Last Timestamp:</strong> <?php echo $formattedTimestamp; ?><br>
                                 <strong>Content:</strong> <?php echo htmlspecialchars($thread['content']); ?><br><br>
                                 <strong>Comments:</strong>
-                                <?php foreach ($thread['comments'] as $comment): ?>
-                                    <li>
-                                        <strong><?php echo htmlspecialchars($comment['user']); ?></strong>:
-                                        <?php echo htmlspecialchars($comment['comment']); ?>
-                                        <span class="comment-date">
-                                            <?php echo date("m/d/Y h:i A", strtotime($comment['timestamp'])); ?>
-                                        </span>
-                                    </li>
-                                <?php endforeach; ?>
+
+                                <ul> <!-- Ensure this unordered list is present -->
+                                    <?php foreach ($thread['comments'] as $comment): ?>
+                                        <li>
+                                            <strong><?php echo htmlspecialchars($comment['user']); ?></strong>:
+                                            <?php echo htmlspecialchars($comment['comment']); ?>
+                                            <span class="comment-date">
+                                                <?php echo date("m/d/Y h:i A", strtotime($comment['timestamp'])); ?>
+                                            </span>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
 
                                 <form class="commentForm" data-thread-id="<?php echo $thread['threadId']; ?>">
                                     <input type="hidden" name="threadId" value="<?php echo $thread['threadId']; ?>"> <!-- This input could be omitted since we're using the data attribute -->
