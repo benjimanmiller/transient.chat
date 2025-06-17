@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ephemera - Boards</title>
+    <title>Ephermera - Boards</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -42,7 +42,7 @@
             <div class="container">
                 <?php
                 $username = $_SESSION["username"];
-                echo "<h1>Welcome to The Ephemera Board, $username.</h1><br>";
+                echo "<h1>Welcome to The Ephermera Board, $username.</h1><br>";
                 ?>
 
                 <!-- Create Thread Button and Form -->
