@@ -14,6 +14,8 @@
         <?php include 'sidebar-left.php'; ?>
         <?php include 'sidebar-right.php'; ?>
         <?php include 'popup-status.php'; ?>
+        <?php include 'check-login-index.php'; ?>
+
 
         <div class="content">
             <div class="container">

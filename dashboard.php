@@ -14,6 +14,28 @@
         <?php include 'sidebar-left.php'; ?>
         <?php include 'sidebar-right.php'; ?>
         <?php include 'popup-status.php'; ?>
+        <?php include 'check-login.php'; ?>
+
+        <?php
+        // Function to update the user's timestamp in users.json
+        function updateUserTimestamp($username) {
+            $filePath = 'users.json';
+            $users = json_decode(file_get_contents($filePath), true);
+
+            foreach ($users as &$user) {
+                if (strtolower($user['user']) === strtolower($username)) {
+                    $user['timestamp'] = date('c'); // Update to current time in ISO 8601 format
+                    break;
+                }
+            }
+
+            file_put_contents($filePath, json_encode(array_values($users), JSON_PRETTY_PRINT));
+        }
+
+        if (isset($_SESSION['username'])) {
+            updateUserTimestamp($_SESSION['username']);
+        }
+        ?>
         <script src="js/dashboard.js"></script>
 
         <div class="content">
@@ -86,7 +108,7 @@
                             $hours = floor($timeLeftInSeconds / 3600);
                             $minutes = floor(($timeLeftInSeconds % 3600) / 60);
                             $seconds = $timeLeftInSeconds % 60;
-                            $timeLeft = sprintf("%02d:%02d:%02d", $hours, $minutes, $seconds);
+                            $timeLeft = sprintf("%02d:%02d", $hours, $minutes,);
                         } else {
                             $timeLeft = "Expired";
                         }

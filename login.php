@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["username"])) {
         header(header: "Location: admin-panel.php?success=Logged In");
         exit();
     }
-    header(header: "Location: dashboard.php?success=Logged In");
+    header(header: "Location: dashboard.php");
     exit();
 } else {
     header(header: "Location: index.php?error=Unable to Login");

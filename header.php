@@ -1,9 +1,14 @@
+<?php session_start(); ?>
+
 <header>
-    <h1><a href="index.php">Ephemera</a></h1>
+    <?php if (isset($_SESSION['username'])): ?>
+        <h1><a href="dashboard.php">Ephemera</a></h1>
+    <?php else: ?>
+        <h1><a href="index.php">Ephemera</a></h1>
+    <?php endif; ?>
     <div class="header-text">
         <p>I don't really think everything has be remembered.</p>
     </div>
 </header>
 
 <script src="js/utils.js"></script>
-<?php session_start(); ?>
