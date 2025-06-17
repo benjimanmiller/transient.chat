@@ -1,6 +1,5 @@
 {
-    "name": "ben/Ephemera",
-    "description": "An Ephemeral Message Board",
+    "name": "ben/ephermera",
     "authors": [
         {
             "name": "Ben Miller",
