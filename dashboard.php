@@ -50,8 +50,10 @@
 
                 <div id="threadForm" class="hidden">
                     <form method="post" action="create-thread.php">
+                        <h3>Title</h3>
                         <input type="text" name="threadTitle" placeholder="Enter thread title" required>
-                        <textarea name="threadContent" placeholder="Enter thread content" required></textarea>
+                        <h3>Post</h3>
+                        <textarea name="threadContent" placeholder="Enter thread content" required rows="3"></textarea><br>
                         <button type="submit">Submit</button>
                     </form>
                 </div>
