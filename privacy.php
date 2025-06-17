@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ephemera - Privacy Statement</title>
+    <title>Ephermera - Privacy Statement</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -20,7 +20,7 @@
                 <h1>Privacy</h1>
                 <br>
                 <p>
-                    At Ephemera, we value your privacy and are committed to protecting your personal information. Our forum is uniquely designed to ensure that all data is transient and temporary.
+                    At Ephermera, we value your privacy and are committed to protecting your personal information. Our forum is uniquely designed to ensure that all data is transient and temporary.
                 </p>
                 <br>
                 <p>
@@ -32,11 +32,11 @@
                 </p>
                 <br>
                 <p>
-                    <strong>Cookies:</strong> Ephemera does not use cookies, ensuring that your browsing experience is free from tracking and external data storage.
+                    <strong>Cookies:</strong> Ephermera does not use cookies, ensuring that your browsing experience is free from tracking and external data storage.
                 </p>
                 <br>
                 <p>
-                    By using Ephemera, you consent to our privacy practices. We are committed to transparency and welcome your thoughts and inquiries about our privacy policies at any time.
+                    By using Ephermera, you consent to our privacy practices. We are committed to transparency and welcome your thoughts and inquiries about our privacy policies at any time.
                 </p>
                 <br>
             </div>
