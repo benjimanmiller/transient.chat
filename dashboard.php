@@ -51,6 +51,18 @@
 
                 if (file_exists($dataFile)) {
                     $threads = json_decode(file_get_contents($dataFile), true);
+                        // Calculate the time left for each thread and sort by it
+                    foreach ($threads as &$thread) {
+                        $postTime = strtotime($thread['timestamp']);
+                        $currentTime = time();
+                        $thread['timeLeftInSeconds'] = ($postTime + 86400) - $currentTime;
+                    }
+                    unset($thread);
+
+                    // Sort threads by time left (ascending)
+                    usort($threads, function($a, $b) {
+                        return $a['timeLeftInSeconds'] <=> $b['timeLeftInSeconds'];
+                    });
                 } else {
                     $threads = [];
                 }
