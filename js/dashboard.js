@@ -1,4 +1,4 @@
-// Define the function in the global scope
+// Global toggle function
 function toggleThread(threadId) {
     const threadElement = document.getElementById(threadId);
     if (threadElement) {
@@ -9,14 +9,75 @@ function toggleThread(threadId) {
 document.addEventListener("DOMContentLoaded", function () {
     const intervalsMap = new Map();
 
+    // Instead of completely rebuilding the threads,
+    // we update the dynamic parts while leaving active comment fields intact.
+    function updateDynamicParts(threads) {
+        threads.forEach((thread, index) => {
+            const uniqueId = `${thread.threadId}-${index}`;
+            const threadHeader = document.getElementById(`thread-${uniqueId}`);
+            const detailRow = document.getElementById(uniqueId);
+            if (!threadHeader || !detailRow) return;
+
+            // Update the countdown timer (if the field is not inside a currently active comment form)
+            const timeLeftCell = threadHeader.querySelector('.time-left-cell');
+            if (timeLeftCell) {
+                // Recalculate time left
+                const postTime = new Date(thread.timestamp).getTime();
+                let timeLeftInSeconds = Math.floor(((postTime + 86400000) - Date.now()) / 1000);
+                let timeLeft, timeLeftClass = '';
+                if (timeLeftInSeconds > 0) {
+                    const hours = Math.floor(timeLeftInSeconds / 3600);
+                    const minutes = Math.floor((timeLeftInSeconds % 3600) / 60);
+                    timeLeft = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                    if (timeLeftInSeconds <= 14400) {
+                        timeLeftClass = 'time-left-red';
+                    } else if (timeLeftInSeconds <= 28800) {
+                        timeLeftClass = 'time-left-orange';
+                    } else if (timeLeftInSeconds <= 43200) {
+                        timeLeftClass = 'time-left-green';
+                    }
+                } else {
+                    timeLeft = 'Expired';
+                    timeLeftClass = 'expired';
+                }
+                timeLeftCell.textContent = timeLeft;
+                timeLeftCell.parentElement.className = timeLeftClass;
+            }
+        });
+    }
+
+    // Full refresh updates threads if none of the important comment fields are focused.
     function fetchThreads() {
-        const openThreads = [...document.querySelectorAll('tr:not(.hidden)')].map(row => row.id);
+        // Check if any comment textarea is active
+        const activeTextarea = document.activeElement;
+        if (activeTextarea && activeTextarea.tagName === 'TEXTAREA' && activeTextarea.closest('.commentForm')) {
+            // If a user is typing in a comment, skip the full refresh.
+            // Instead, only update dynamic parts (e.g., countdowns).
+            fetch('get-threads.php')
+                .then(response => response.json())
+                .then(threads => {
+                    updateDynamicParts(threads);
+                })
+                .catch(error => console.error('Error:', error));
+            return;
+        }
+
+        // Save scroll and any drafts before rebuilding
         const scrollPosition = window.scrollY;
+        document.querySelectorAll('.commentForm').forEach(form => {
+            const threadId = form.getAttribute('data-thread-id');
+            const commentBox = form.querySelector('textarea[name="newComment"]');
+            localStorage.setItem(`comment-draft-${threadId}`, commentBox.value);
+        });
+
+        // Record which detail rows are currently expanded so we can reapply that state.
+        const openThreads = [...document.querySelectorAll('tr:not([id^="thread-"]):not(.hidden)')].map(row => row.id);
 
         fetch('get-threads.php')
             .then(response => response.json())
             .then(threads => {
                 const tableBody = document.getElementById('threadsTable');
+                // Rebuild table header
                 tableBody.innerHTML = `
                     <tr>
                         <th>Thread Title</th>
@@ -30,15 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     const uniqueId = `${thread.threadId}-${index}`;
 
                     function updateTime() {
-                        let timeLeft;
-                        let timeLeftClass = '';
-
+                        let timeLeft, timeLeftClass = '';
                         if (timeLeftInSeconds > 0) {
                             const hours = Math.floor(timeLeftInSeconds / 3600);
                             const minutes = Math.floor((timeLeftInSeconds % 3600) / 60);
-
                             timeLeft = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-
                             if (timeLeftInSeconds <= 14400) {
                                 timeLeftClass = 'time-left-red';
                             } else if (timeLeftInSeconds <= 28800) {
@@ -49,12 +106,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         } else {
                             timeLeft = 'Expired';
                             timeLeftClass = 'expired';
-                            clearInterval(intervalsMap.get(uniqueId));  // Stop the interval once expired
+                            clearInterval(intervalsMap.get(uniqueId));
                         }
 
                         const timeLeftCell = document.querySelector(`#thread-${CSS.escape(uniqueId)} .time-left-cell`);
-                        timeLeftCell.textContent = timeLeft;
-                        timeLeftCell.parentElement.className = timeLeftClass;
+                        if (timeLeftCell) {
+                            timeLeftCell.textContent = timeLeft;
+                            timeLeftCell.parentElement.className = timeLeftClass;
+                        }
                     }
 
                     const threadRow = `
@@ -91,29 +150,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     tableBody.insertAdjacentHTML('beforeend', threadRow);
 
-                    // Restore the state of the thread (open/closed)
+                    // Restore expanded state for detail row if it was open before the refresh
                     if (openThreads.includes(uniqueId)) {
                         toggleThread(uniqueId);
                     }
 
-                    // Clear existing interval if already present
+                    const commentBox = document.querySelector(`#${CSS.escape(uniqueId)} .commentForm textarea[name="newComment"]`);
+                    const savedDraft = localStorage.getItem(`comment-draft-${thread.threadId}`);
+                    if (commentBox && savedDraft !== null) {
+                        commentBox.value = savedDraft;
+                    }
+
                     if (intervalsMap.has(uniqueId)) {
                         clearInterval(intervalsMap.get(uniqueId));
                     }
 
-                    // Set a new interval and store it in the map
                     const interval = setInterval(() => {
                         timeLeftInSeconds -= 1;
                         updateTime();
                     }, 1000);
                     intervalsMap.set(uniqueId, interval);
 
-                    updateTime(); // Initial update to set the initial time
+                    updateTime();
                 });
 
-                attachSubmitListeners(); // Re-attach listeners to newly inserted forms
-
-                // Restore the scroll position
+                attachSubmitListeners();
                 window.scrollTo(0, scrollPosition);
             })
             .catch(error => console.error('Error:', error));
@@ -126,28 +187,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const formData = new FormData(this);
                 const threadId = this.getAttribute('data-thread-id');
-
                 formData.append('threadId', threadId);
 
                 fetch('add-comment-ajax.php', {
                     method: 'POST',
                     body: formData
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            fetchThreads(); // Reload all threads
-                        } else {
-                            console.error('Error adding comment:', data.message);
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        localStorage.removeItem(`comment-draft-${threadId}`);
+                        const commentBox = this.querySelector('textarea[name="newComment"]');
+                        if (commentBox) {
+                            commentBox.value = "";
                         }
-                    })
-                    .catch(error => console.error('Error:', error));
+                        fetchThreads();
+                    } else {
+                        console.error('Error adding comment:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             });
         });
     }
 
-    // Periodically fetch threads every 20 seconds
+    // Refresh every 20 seconds
     setInterval(fetchThreads, 20000);
-
-    fetchThreads(); // Initial fetch when the page loads
+    fetchThreads();
 });
