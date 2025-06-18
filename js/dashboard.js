@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const intervalsMap = new Map();
 
     function fetchThreads() {
+        const openThreads = [...document.querySelectorAll('tr:not(.hidden)')].map(row => row.id);
+        const scrollPosition = window.scrollY;
+
         fetch('get-threads.php')
             .then(response => response.json())
             .then(threads => {
@@ -88,6 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     tableBody.insertAdjacentHTML('beforeend', threadRow);
 
+                    // Restore the state of the thread (open/closed)
+                    if (openThreads.includes(uniqueId)) {
+                        toggleThread(uniqueId);
+                    }
+
                     // Clear existing interval if already present
                     if (intervalsMap.has(uniqueId)) {
                         clearInterval(intervalsMap.get(uniqueId));
@@ -104,6 +112,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 attachSubmitListeners(); // Re-attach listeners to newly inserted forms
+
+                // Restore the scroll position
+                window.scrollTo(0, scrollPosition);
             })
             .catch(error => console.error('Error:', error));
     }
@@ -135,5 +146,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    fetchThreads(); // Load threads when the page loads
+    // Periodically fetch threads every 20 seconds
+    setInterval(fetchThreads, 20000);
+
+    fetchThreads(); // Initial fetch when the page loads
 });
