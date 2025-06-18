@@ -36,7 +36,6 @@
             updateUserTimestamp($_SESSION['username']);
         }
         ?>
-        <script src="js/dashboard.js"></script>
 
         <div class="content">
             <div class="container">
@@ -77,114 +76,21 @@
                 <script>
                     localStorage.setItem('username', '<?php echo $username; ?>');
                 </script>
-                
-                <?php
-                $dataFile = 'data.json';
-
-                if (file_exists($dataFile)) {
-                    $threads = json_decode(file_get_contents($dataFile), true);
-                        // Calculate the time left for each thread and sort by it
-                    foreach ($threads as &$thread) {
-                        $postTime = strtotime($thread['timestamp']);
-                        $currentTime = time();
-                        $thread['timeLeftInSeconds'] = ($postTime + 86400) - $currentTime;
-                    }
-                    unset($thread);
-
-                    // Sort threads by time left (ascending)
-                    usort($threads, function($a, $b) {
-                        return $a['timeLeftInSeconds'] <=> $b['timeLeftInSeconds'];
-                    });
-                } else {
-                    $threads = [];
-                }
-                ?>
 
                 <br>
                 <br>
-                <table>
+                <table id="threadsTable">
                     <tr>
                         <th>Thread Title</th>
                         <th>Time Left</th>
                     </tr>
-                    <?php foreach ($threads as $index => $thread): ?>
-                        <?php
-                        $postTime = strtotime($thread['timestamp']);
-                        $currentTime = time();
-                        $timeLeftInSeconds = ($postTime + 86400) - $currentTime;
-
-                        if ($timeLeftInSeconds > 0) {
-                            $hours = floor($timeLeftInSeconds / 3600);
-                            $minutes = floor(($timeLeftInSeconds % 3600) / 60);
-                            $seconds = $timeLeftInSeconds % 60;
-                            $timeLeft = sprintf("%02d:%02d", $hours, $minutes,);
-                                    // Determine the class based on the time left
-                            $timeLeftClass = '';
-                            if ($timeLeftInSeconds <= 14400) { // 4 hours
-                                $timeLeftClass = 'time-left-red';
-                            } else if ($timeLeftInSeconds <= 28800) { // 8 hours
-                                $timeLeftClass = 'time-left-orange';
-                            } else if ($timeLeftInSeconds <= 43200) { // 12 hours
-                                $timeLeftClass = 'time-left-green';
-                            }
-                        } else {
-                            $timeLeft = "Expired";
-                            $timeLeftClass = 'expired'; // Optional class for expired threads
-
-                        }
-
-                        $formattedTimestamp = date("m/d/Y h:i A", $postTime);
-                        $uniqueId = $thread['threadId'] . '-' . $index; // Ensure unique ID
-                        ?>
-                        <tr class="<?php echo $timeLeftClass; ?>">
-                            <td>
-                                <a href="#" onclick="toggleThread('<?php echo $uniqueId; ?>'); return false;">
-                                    <?php echo $thread['threadTitle']; ?>
-                                </a>
-                            </td>
-                            <td><?php echo $timeLeft; ?></td>
-                        </tr>
-                        <tr id="<?php echo $uniqueId; ?>" class="hidden">
-                            <td colspan="2">
-                                <strong>Posted by:</strong> <?php echo htmlspecialchars($thread['user']); ?> 
-                                <strong>Last Timestamp:</strong> <?php echo $formattedTimestamp; ?><br>
-                                <strong>Thread Post:</strong> <?php echo $thread['content']; ?><br><br>
-                                <strong>Comments:</strong>
-
-                                <ul> <!-- Ensure this unordered list is present -->
-                                    <?php foreach ($thread['comments'] as $comment): ?>
-                                        <li>
-                                            <strong><?php echo htmlspecialchars($comment['user']); ?></strong>:
-                                            <?php echo htmlspecialchars($comment['comment']); ?>
-                                            <span class="comment-date">
-                                                <?php echo date("m/d/Y h:i A", strtotime($comment['timestamp'])); ?>
-                                            </span>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-
-                                <form class="commentForm" data-thread-id="<?php echo $thread['threadId']; ?>">
-                                    <input type="hidden" name="threadId" value="<?php echo $thread['threadId']; ?>"> <!-- This input could be omitted since we're using the data attribute -->
-                                    <textarea name="newComment" required></textarea>
-                                    <br>
-                                    <button type="submit">Add Comment</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <!-- Dynamic table content will be inserted here by dashboard.js -->
                 </table>
             </div>
         </div>
     </div>
 
-    <script>
-        function toggleThread(threadId) {
-            const threadElement = document.getElementById(threadId);
-            if (threadElement) {
-                threadElement.classList.toggle('hidden');
-            }
-        }
-    </script>
+    <script src="js/dashboard.js"></script>
 </body>
 
 </html>
