@@ -15,6 +15,7 @@
         <?php include 'sidebar-right.php'; ?>
         <?php include 'popup-status.php'; ?>
         <?php include 'check-login.php'; ?>
+        <script src="js/dashboard.js"></script>
 
         <?php
         // Function to update the user's timestamp in users.json
@@ -90,7 +91,6 @@
         </div>
     </div>
 
-    <script src="js/dashboard.js"></script>
 </body>
 
 </html>
