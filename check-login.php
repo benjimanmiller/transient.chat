@@ -1,5 +1,5 @@
 <?php
-    if (!(isset($_SESSION["user_type"]))) {
+    if (!(isset($_SESSION["username"]))) {
         header("Location: index.php?error=Not Logged In");
         exit();
     }

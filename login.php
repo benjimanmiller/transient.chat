@@ -12,14 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["username"])) {
         ? json_decode(file_get_contents($usersFile), true)
         : [];
 
-    // Debug: Log loaded users
-    error_log("Users loaded: " . print_r($users, true));
-
     // Check for duplicate username (case-sensitive) with extra logging
     foreach ($users as $user) {
-        error_log("Comparing input username (" . $username . ") with stored value (" . $user['user'] . ")");
         if ($user['user'] === $username) {
-            error_log("Duplicate username detected: " . $username);
             header("Location: index.php?error=Username already in use. Please choose another name.");
             exit();
         }
