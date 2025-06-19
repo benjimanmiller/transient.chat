@@ -18,6 +18,26 @@ document.addEventListener("DOMContentLoaded", function () {
             const detailRow = document.getElementById(uniqueId);
             if (!threadHeader || !detailRow) return;
 
+            // Update the active time display (if the field is not inside a currently active comment form)
+            const timeActiveCell = threadHeader.querySelector('.time-active-cell');
+            if (timeActiveCell) {
+            // Calculate active time
+            const postTime = new Date(thread.created).getTime();
+            let timeActiveInSeconds = Math.floor((Date.now() - postTime) / 1000);
+            let timeActive = '';
+
+            if (timeActiveInSeconds >= 0) {
+                const days = Math.floor(timeActiveInSeconds / (3600 * 24));
+                const hours = Math.floor((timeActiveInSeconds % (3600 * 24)) / 3600);
+                const minutes = Math.floor((timeActiveInSeconds % 3600) / 60);
+                timeActive = `${days} days ${hours} hours ${minutes} minutes`;
+            } else {
+                timeActive = 'Inactive';
+            }
+
+            timeActiveCell.textContent = timeActive;
+            }
+
             // Update the countdown timer (if the field is not inside a currently active comment form)
             const timeLeftCell = threadHeader.querySelector('.time-left-cell');
             if (timeLeftCell) {
@@ -28,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (timeLeftInSeconds > 0) {
                     const hours = Math.floor(timeLeftInSeconds / 3600);
                     const minutes = Math.floor((timeLeftInSeconds % 3600) / 60);
-                    timeLeft = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                    timeLeft = `${hours.toString().padStart(2, '0')} hours ${minutes.toString().padStart(2, '0')} minutes`;
                     if (timeLeftInSeconds <= 14400) {
                         timeLeftClass = 'time-left-red';
                     } else if (timeLeftInSeconds <= 28800) {
@@ -81,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 tableBody.innerHTML = `
                     <tr>
                         <th>Thread Title</th>
+                        <th>Time Active</th>
                         <th>Time Left</th>
                     </tr>
                 `;
@@ -91,11 +112,30 @@ document.addEventListener("DOMContentLoaded", function () {
                     const uniqueId = `${thread.threadId}-${index}`;
 
                     function updateTime() {
+                        let timeActive = '';
+                        const postTime = new Date(thread.created).getTime();
+                        let timeActiveInSeconds = Math.floor((Date.now() - postTime) / 1000);
+
+                        if (timeActiveInSeconds >= 0) {
+                        const days = Math.floor(timeActiveInSeconds / (3600 * 24));
+                        const hours = Math.floor((timeActiveInSeconds % (3600 * 24)) / 3600);
+                        const minutes = Math.floor((timeActiveInSeconds % 3600) / 60);
+                        timeActive = `${days} days ${hours} hours ${minutes} minutes`;
+                        } else {
+                        timeActive = 'Inactive';
+                        clearInterval(intervalsMap.get(uniqueId));
+                        }
+
+                        const timeActiveCell = document.querySelector(`#thread-${CSS.escape(uniqueId)} .time-active-cell`);
+                        if (timeActiveCell) {
+                        timeActiveCell.textContent = timeActive;
+                        }
+
                         let timeLeft, timeLeftClass = '';
                         if (timeLeftInSeconds > 0) {
                             const hours = Math.floor(timeLeftInSeconds / 3600);
                             const minutes = Math.floor((timeLeftInSeconds % 3600) / 60);
-                            timeLeft = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                            timeLeft = `${hours.toString().padStart(2, '0')} hours ${minutes.toString().padStart(2, '0')} minutes`;
                             if (timeLeftInSeconds <= 14400) {
                                 timeLeftClass = 'time-left-red';
                             } else if (timeLeftInSeconds <= 28800) {
@@ -121,10 +161,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>
                                 <a href="#" onclick="toggleThread('${uniqueId}'); return false;">${thread.threadTitle}</a>
                             </td>
+                            <td class="time-active-cell"></td>
                             <td class="time-left-cell"></td>
                         </tr>
                         <tr id="${uniqueId}" class="hidden">
-                            <td colspan="2">
+                            <td colspan="3">
                                 <strong>Posted by:</strong> ${thread.user}
                                 <strong>Last Timestamp:</strong> ${new Date(postTime).toLocaleString()}<br>
                                 <strong>Thread Post:</strong> ${thread.content}<br><br>

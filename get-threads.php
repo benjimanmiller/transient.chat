@@ -8,6 +8,10 @@ if (file_exists($dataFile)) {
 
     // Ensure each thread has a unique ID and necessary structured data
     foreach ($threads as &$thread) {
+        $activeTime = strtotime($thread['created']);
+        $currentTime = time();
+        $thread['timeActiveInSeconds'] = $currentTime - $activeTime;
+
         $postTime = strtotime($thread['timestamp']);
         $currentTime = time();
         $thread['timeLeftInSeconds'] = ($postTime + 86400) - $currentTime;

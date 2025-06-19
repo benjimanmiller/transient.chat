@@ -22,6 +22,7 @@ if (file_exists($dataFile)) {
         'user' => $username,
         'content' => htmlspecialchars($threadContent),
         'timestamp' => gmdate('Y-m-d\TH:i:s\Z'),
+        'created' => gmdate('Y-m-d\TH:i:s\Z'),
         'comments' => []
     ];
 
