@@ -1,5 +1,6 @@
 {
-    "name": "ben/ephermera",
+    "name": "ben/transient.chat",
+    "description": "A Transient Forum",
     "authors": [
         {
             "name": "Ben Miller",

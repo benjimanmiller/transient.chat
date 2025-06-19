@@ -6,7 +6,7 @@ if (isset($_POST['username'])) {
 } elseif (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
 } else {
-    $username = 'Ephermera AI';
+    $username = 'Transient AI';
 }
 
 $threadTitle = $_POST['threadTitle'];

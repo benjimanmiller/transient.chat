@@ -21,14 +21,14 @@ document.addEventListener("DOMContentLoaded", function () {
             // Update the countdown timer (if the field is not inside a currently active comment form)
             const timeLeftCell = threadHeader.querySelector('.time-left-cell');
             if (timeLeftCell) {
-                // Recalculate time left
-                const postTime = new Date(thread.timestamp).getTime();
+                // Recalculate time left using createdTimestamp
+                const postTime = new Date(thread.createdTimestamp).getTime();
                 let timeLeftInSeconds = Math.floor(((postTime + 86400000) - Date.now()) / 1000);
                 let timeLeft, timeLeftClass = '';
                 if (timeLeftInSeconds > 0) {
                     const hours = Math.floor(timeLeftInSeconds / 3600);
                     const minutes = Math.floor((timeLeftInSeconds % 3600) / 60);
-                    timeLeft = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                    timeLeft = `${hours} hours ${minutes} minutes`;
                     if (timeLeftInSeconds <= 14400) {
                         timeLeftClass = 'time-left-red';
                     } else if (timeLeftInSeconds <= 28800) {
@@ -77,25 +77,28 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(threads => {
                 const tableBody = document.getElementById('threadsTable');
-                // Rebuild table header
+                // Rebuild table header with a new "Time Active" column
                 tableBody.innerHTML = `
                     <tr>
                         <th>Thread Title</th>
+                        <th>Time Active</th>
                         <th>Time Left</th>
                     </tr>
                 `;
 
                 threads.forEach((thread, index) => {
-                    const postTime = new Date(thread.timestamp).getTime();
+                    // Use createdTimestamp instead of timestamp
+                    const postTime = new Date(thread.createdTimestamp).getTime();
                     let timeLeftInSeconds = Math.floor(((postTime + 86400000) - Date.now()) / 1000);
                     const uniqueId = `${thread.threadId}-${index}`;
 
+                    // Modified updateTime function to update both Time Left and Time Active columns
                     function updateTime() {
                         let timeLeft, timeLeftClass = '';
                         if (timeLeftInSeconds > 0) {
                             const hours = Math.floor(timeLeftInSeconds / 3600);
                             const minutes = Math.floor((timeLeftInSeconds % 3600) / 60);
-                            timeLeft = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                            timeLeft = `${hours} hours ${minutes} minutes`; // Only hours and minutes for "Time Left"
                             if (timeLeftInSeconds <= 14400) {
                                 timeLeftClass = 'time-left-red';
                             } else if (timeLeftInSeconds <= 28800) {
@@ -108,23 +111,34 @@ document.addEventListener("DOMContentLoaded", function () {
                             timeLeftClass = 'expired';
                             clearInterval(intervalsMap.get(uniqueId));
                         }
-
                         const timeLeftCell = document.querySelector(`#thread-${CSS.escape(uniqueId)} .time-left-cell`);
                         if (timeLeftCell) {
                             timeLeftCell.textContent = timeLeft;
                             timeLeftCell.parentElement.className = timeLeftClass;
                         }
+
+                        // Calculate Active Time as difference between now and postTime
+                        const activeTimeCell = document.querySelector(`#thread-${CSS.escape(uniqueId)} .active-time-cell`);
+                        if (activeTimeCell) {
+                            const activeSeconds = Math.floor((Date.now() - postTime) / 1000);
+                            const activeDays = Math.floor(activeSeconds / 86400);
+                            const activeHours = Math.floor((activeSeconds % 86400) / 3600);
+                            const activeMinutes = Math.floor((activeSeconds % 3600) / 60);
+                            activeTimeCell.textContent = `${activeDays} days ${activeHours} hours ${activeMinutes} minutes`;
+                        }
                     }
 
+                    // Modified thread row with new "Active Time" column:
                     const threadRow = `
                         <tr id="thread-${uniqueId}" class="time-left-class">
                             <td>
                                 <a href="#" onclick="toggleThread('${uniqueId}'); return false;">${thread.threadTitle}</a>
                             </td>
+                            <td class="active-time-cell"></td>
                             <td class="time-left-cell"></td>
                         </tr>
                         <tr id="${uniqueId}" class="hidden">
-                            <td colspan="2">
+                            <td colspan="3">
                                 <strong>Posted by:</strong> ${thread.user}
                                 <strong>Last Timestamp:</strong> ${new Date(postTime).toLocaleString()}<br>
                                 <strong>Thread Post:</strong> ${thread.content}<br><br>

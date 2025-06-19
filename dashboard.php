@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ephermera - Boards</title>
+    <title>Transient - Boards</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -42,7 +42,7 @@
             <div class="container">
                 <?php
                 $username = $_SESSION["username"];
-                echo "<h1>Welcome to The Ephermera Board, $username.</h1>";
+                echo "<h1>Welcome to The Transient Board, $username.</h1>";
                 ?>
                 <ul>
                     <li>Green boards have 12 to 8 hours left.</li>
@@ -83,6 +83,7 @@
                 <table id="threadsTable">
                     <tr>
                         <th>Thread Title</th>
+                        <th>Time Active</th>
                         <th>Time Left</th>
                     </tr>
                     <!-- Dynamic table content will be inserted here by dashboard.js -->
