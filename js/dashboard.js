@@ -6,6 +6,11 @@ function toggleThread(threadId) {
     }
 }
 
+function linkify(text) {
+    const urlPattern = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlPattern, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const intervalsMap = new Map();
 
@@ -168,12 +173,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td colspan="3">
                                 <strong>Posted by:</strong> ${thread.user}
                                 <strong>Last Timestamp:</strong> ${new Date(postTime).toLocaleString()}<br>
-                                <strong>Thread Post:</strong> ${thread.content}<br><br>
+                                <strong>Thread Post:</strong> ${linkify(thread.content)}<br><br>
                                 <strong>Comments:</strong>
                                 <ul>
                                     ${thread.comments.map(comment => `
                                         <li>
-                                            <strong>${comment.user}</strong>: ${comment.comment}
+                                            <strong>${comment.user}</strong>: ${linkify(comment.comment)}
                                             <span class="comment-date">
                                                 ${new Date(comment.timestamp).toLocaleString()}
                                             </span>
