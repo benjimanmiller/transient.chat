@@ -55,7 +55,7 @@ header h1 a {
     border-radius: 12px;
     min-height: 100px;
     flex-shrink: 0;
-    flex: 0 0 100%;
+    flex: 0 0 200px;
 }
 
 .sidebar-left ul,
@@ -159,5 +159,7 @@ button:hover, input[type="submit"]:hover {
     .sidebar-left,
     .sidebar-right {
         width: 100%;
+        flex: 0 0 100%;
+
     }
 }
