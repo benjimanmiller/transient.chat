@@ -180,6 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                         </li>
                                     `).join('')}
                                 </ul>
+                                <br>
                                 <form class="commentForm" data-thread-id="${thread.threadId}">
                                     <textarea name="newComment" required></textarea>
                                     <br>

@@ -51,6 +51,7 @@
                     <li>If a board reaches 24 hours with no engagement, it gets deleted!</li>
                     <li>If you logout or don't come back, your username gets recycled.</li>
                 </ul>
+                <br>
 
                 <!-- Create Thread Button and Form -->
                 <button onclick="toggleThreadForm()">Create a Thread</button>
@@ -60,7 +61,7 @@
                         <h3>Title</h3>
                         <input type="text" name="threadTitle" placeholder="Enter thread title" required>
                         <h3>Post</h3>
-                        <textarea name="threadContent" placeholder="Enter thread content" required rows="3"></textarea><br>
+                        <textarea name="threadContent" placeholder="Enter thread content" required rows="3"></textarea>
                         <button type="submit">Submit</button>
                     </form>
                 </div>
@@ -78,8 +79,6 @@
                     localStorage.setItem('username', '<?php echo $username; ?>');
                 </script>
 
-                <br>
-                <br>
                 <table id="threadsTable">
                     <tr>
                         <th>Thread Title</th>
