@@ -52,7 +52,6 @@
                     <li>If you logout or don't come back, your username gets recycled.</li>
                 </ul>
                 <br>
-
                 <!-- Create Thread Button and Form -->
                 <button onclick="toggleThreadForm()">Create a Thread</button>
 
@@ -78,6 +77,10 @@
                 <script>
                     localStorage.setItem('username', '<?php echo $username; ?>');
                 </script>
+
+                <div id="imgContainer">
+                    <img id="dashboardImage" src="fleeting.png" />
+                </div>
 
                 <table id="threadsTable">
                     <tr>

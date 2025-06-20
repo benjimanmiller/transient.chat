@@ -80,6 +80,7 @@ header h1 a {
     padding: 24px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     min-width: 500px;
+    position: relative;
 }
 
 .container ul {
@@ -150,16 +151,30 @@ button:hover, input[type="submit"]:hover {
     display: none;
 }
 
+#imgContainer {
+    position: absolute;
+    top: 37px;
+    right: 15px;
+}
+
+#dashboardImage {
+    width: 200px;
+    height: auto;
+}
+
 /* RESPONSIVE FIXES */
 @media (max-width: 900px) {
     .wrap {
         flex-direction: column;
     }
 
+    #imgContainer {
+    display: none;
+    }   
+
     .sidebar-left,
     .sidebar-right {
         width: 100%;
         flex: 0 0 100%;
-
     }
 }
