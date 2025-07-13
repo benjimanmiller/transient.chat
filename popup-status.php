@@ -1,7 +1,7 @@
 <?php
-    if (isset($_GET['error']) && !empty($_GET['error'])) {
-        $errorMessage = $_GET['error'];
-        echo "<script>
+if (isset($_GET['error']) && !empty($_GET['error'])) {
+    $errorMessage = $_GET['error'];
+    echo "<script>
                 var errorMessage = '$errorMessage';
                 var popup = document.createElement('div');
                 popup.innerHTML = errorMessage;
@@ -14,10 +14,10 @@
                     }, 5000);
                 }, 1000);            
                 </script>";
-    }
-    if (isset($_GET['success']) && !empty($_GET['success'])) {
-        $successMessage = $_GET['success'];
-        echo "<script>
+}
+if (isset($_GET['success']) && !empty($_GET['success'])) {
+    $successMessage = $_GET['success'];
+    echo "<script>
                 var successMessage = '$successMessage';
                 var popup = document.createElement('div');
                 popup.innerHTML = successMessage;
@@ -30,5 +30,5 @@
                     }, 5000);
                 }, 1000);            
                 </script>";
-    }
+}
 ?>

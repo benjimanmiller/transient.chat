@@ -7,7 +7,7 @@
         <h1><a href="index.php">Transient</a></h1>
     <?php endif; ?>
     <div class="header-text">
-        <p>A Forum for the Momentary Present</p>
+        <p>A Chatroom for the Momentary Present</p>
     </div>
 </header>
 

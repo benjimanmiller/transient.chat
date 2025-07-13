@@ -15,7 +15,7 @@
         <?php include 'sidebar-left.php'; ?>
         <?php include 'sidebar-right.php'; ?>
         <?php include 'popup-status.php'; ?>
-        
+
         <div class="content">
             <div class="container">
                 <h1>Blog Title</h1>

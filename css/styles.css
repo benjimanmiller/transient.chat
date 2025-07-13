@@ -122,7 +122,7 @@ tr.time-left-red { background-color: rgba(239,68,68,0.15); }
 tr.expired { background-color: rgba(156,163,175,0.15); }
 
 /* FORM & BUTTONS */
-input[type="text"], textarea {
+input[type="password"], input[type="text"], textarea {
     width: 100%;
     background: #5d5e60;
     color: #ffffff;
