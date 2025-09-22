@@ -1,0 +1,6 @@
+name: transient.chat
+services:
+- name: web
+  github:
+    repo: digitalocean/transient.chat
+    branch: main

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transient.chat</title>
+    <meta name="description" content="Everything is ephemeral.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <script src="index.js"></script>
+
+    <audio id="notification-sound" src="IM.wav" preload="auto"></audio>
+
+    <div id="login-container">
+        <input type="text" id="username-input" placeholder="Enter your name" />
+        <button id="start-chat-button">Start Chat</button>
+    </div>
+
+    <div id="chat-container">
+        <div id="messages-container"></div>
+        <input type="text" id="message-input" placeholder="Type a message or /help for help commands" />
+        <button id="send-button" onclick="sendMessage()">Send</button>
+    </div>
+</body>
+
+</html>
+

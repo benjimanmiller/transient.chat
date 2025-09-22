@@ -1,0 +1,7 @@
+spec:
+  name: transient.chat
+  services:
+  - name: web
+    git:
+      branch: main
+      repo_clone_url: https://github.com/benjimanmiller/transient.chat/tree/main.git
