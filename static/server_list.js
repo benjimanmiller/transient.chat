@@ -41,13 +41,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     fetch("/rooms")
         .then(response => response.json())
         .then(async data => {
-            const { regional, topical, public: publicRooms } = data;
+            const { regional, topical, public: publicRooms, unique_users } = data;
 
             const regionalList = document.getElementById('regional-rooms');
             const topicalList = document.getElementById('topical-rooms');
             const publicList = document.getElementById('public-rooms');
-
-            const userSet = new Set();
 
             const createRoomItem = (roomObj) => {
                 const { name, users: userCount } = roomObj;
@@ -56,30 +54,27 @@ document.addEventListener("DOMContentLoaded", async () => {
                 a.href = `/chat.html?room=${encodeURIComponent(name)}`;
                 a.textContent = `${name}  ( ${userCount} )`;
                 li.appendChild(a);
-                return { li, userCount };
+                return li;
             };
 
             // Populate rooms
-            let totalUsers = 0;
             for (const room of regional) {
-                const { li, userCount } = createRoomItem(room);
-                totalUsers += userCount;
+                const li = createRoomItem(room);
                 regionalList.appendChild(li);
             }
 
             for (const room of topical) {
-                const { li, userCount } = createRoomItem(room);
-                totalUsers += userCount;
+                const li = createRoomItem(room);
                 topicalList.appendChild(li);
             }
 
             for (const room of publicRooms) {
-                const { li, userCount } = createRoomItem(room);
-                totalUsers += userCount;
+                const li = createRoomItem(room);
                 publicList.appendChild(li);
             }
 
-            document.getElementById('user-count').textContent = `Users Chatting ( ${totalUsers} )`;
+            // Set unique user count
+            document.getElementById('user-count').textContent = `Users Chatting ( ${unique_users} )`;
         });
 
     document.getElementById('create-room-btn').addEventListener('click', () => {

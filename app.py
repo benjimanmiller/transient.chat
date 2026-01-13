@@ -193,17 +193,23 @@ def get_or_create_rooms():
         public_chat_rooms.append(room_name)
         return jsonify({"name": room_name})
 
-    # Helper function to build room data with user counts
+    # Count users per room
     def build_room_data(room_list):
         return [
             {"name": room, "users": len(room_users.get(room, {}))} for room in room_list
         ]
+
+    # Collect all unique usernames
+    all_users = set()
+    for users in room_users.values():
+        all_users.update(users.keys())
 
     return jsonify(
         {
             "regional": build_room_data(regional_chat_rooms),
             "topical": build_room_data(topical_chat_rooms),
             "public": build_room_data(public_chat_rooms),
+            "unique_users": len(all_users),
         }
     )
 
