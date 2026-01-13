@@ -47,47 +47,39 @@ document.addEventListener("DOMContentLoaded", async () => {
             const topicalList = document.getElementById('topical-rooms');
             const publicList = document.getElementById('public-rooms');
 
-            const userSet = new Set(); // Track unique users
+            const userSet = new Set();
 
-            const createRoomItem = async (room) => {
-                let userCount = 0;
-                try {
-                    const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
-                    const users = await res.json();
-                    if (Array.isArray(users)) {
-                        userCount = users.length;
-                        users.forEach(u => userSet.add(u));
-                    }
-                } catch (e) {
-                    console.error(`Failed to fetch users for room ${room}:`, e);
-                }
-
+            const createRoomItem = (roomObj) => {
+                const { name, users: userCount } = roomObj;
                 const li = document.createElement('li');
                 const a = document.createElement('a');
-                a.href = `/chat.html?room=${encodeURIComponent(room)}`;
-                a.textContent = `${room}  ( ${userCount} )`;
+                a.href = `/chat.html?room=${encodeURIComponent(name)}`;
+                a.textContent = `${name}  ( ${userCount} )`;
                 li.appendChild(a);
-                return li;
+                return { li, userCount };
             };
 
             // Populate rooms
+            let totalUsers = 0;
             for (const room of regional) {
-                const li = await createRoomItem(room);
+                const { li, userCount } = createRoomItem(room);
+                totalUsers += userCount;
                 regionalList.appendChild(li);
             }
 
             for (const room of topical) {
-                const li = await createRoomItem(room);
+                const { li, userCount } = createRoomItem(room);
+                totalUsers += userCount;
                 topicalList.appendChild(li);
             }
 
             for (const room of publicRooms) {
-                const li = await createRoomItem(room);
+                const { li, userCount } = createRoomItem(room);
+                totalUsers += userCount;
                 publicList.appendChild(li);
             }
 
-            // Update total user count
-            document.getElementById('user-count').textContent = `Users Chatting ( ${userSet.size} )`;
+            document.getElementById('user-count').textContent = `Users Chatting ( ${totalUsers} )`;
         });
 
     document.getElementById('create-room-btn').addEventListener('click', () => {

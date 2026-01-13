@@ -192,11 +192,18 @@ def get_or_create_rooms():
             return jsonify({"error": "Room already exists"}), 400
         public_chat_rooms.append(room_name)
         return jsonify({"name": room_name})
+
+    # Helper function to build room data with user counts
+    def build_room_data(room_list):
+        return [
+            {"name": room, "users": len(room_users.get(room, {}))} for room in room_list
+        ]
+
     return jsonify(
         {
-            "regional": regional_chat_rooms,
-            "topical": topical_chat_rooms,
-            "public": public_chat_rooms,
+            "regional": build_room_data(regional_chat_rooms),
+            "topical": build_room_data(topical_chat_rooms),
+            "public": build_room_data(public_chat_rooms),
         }
     )
 
