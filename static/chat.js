@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     div.textContent = `${msg.username}: ${msg.text}`;
                     messagesDiv.appendChild(div);
                 });
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
             });
     }
 

@@ -110,7 +110,6 @@ topical_chat_rooms = [
     "Augmented Reality",
     "Biohacking",
     "Home Automation",
-    "Ethics in Tech",
     "Sustainable Living",
 ]
 
@@ -221,6 +220,7 @@ def chat_room(room):
 
     return jsonify(messages[room])
 
+
 @app.route("/chat/<room>/users", methods=["POST", "GET"])
 def room_user_list(room):
     room = room.strip()
@@ -233,6 +233,7 @@ def room_user_list(room):
     users = room_users.get(room, {})
     return jsonify(list(users.keys()))
 
+
 # Background cleanup thread
 def cleanup_messages():
     while True:
@@ -243,11 +244,12 @@ def cleanup_messages():
                 for msg in room_messages
                 if datetime.fromisoformat(msg["timestamp"]) > cutoff
             ]
-            
+
         user_cutoff = datetime.utcnow() - timedelta(minutes=15)
         for room in list(room_users.keys()):
             room_users[room] = {
-                u: t for u, t in room_users[room].items()
+                u: t
+                for u, t in room_users[room].items()
                 if datetime.fromisoformat(t) > user_cutoff
             }
         time.sleep(60)  # Run every 60 seconds

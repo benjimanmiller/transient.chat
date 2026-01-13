@@ -23,6 +23,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // If not validated, set up login as normal
     const startButton = document.getElementById('start-chat-button');
 
+    const usernameInput = document.getElementById('username-input');
+    if (usernameInput) {
+        usernameInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Optional: prevent default form submit
+                startButton.click();
+            }
+        });
+    }
+
     if (startButton) {
         startButton.addEventListener('click', async () => {
             const usernameInput = document.getElementById('username-input');
