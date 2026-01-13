@@ -36,6 +36,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     const messagesDiv = document.getElementById("messages");
     const form = document.getElementById("chat-form");
     const input = document.getElementById("message-input");
+    const usersDiv = document.getElementById("user-list");
+
+    async function refreshUserPresence() {
+        await fetch(`/chat/${encodeURIComponent(room)}/users`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username })
+        });
+    }
+
+    async function loadUsers() {
+        const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
+        const userList = await res.json();
+        usersDiv.innerHTML = "";
+        userList.forEach(user => {
+            const div = document.createElement("div");
+            div.textContent = user;
+            usersDiv.appendChild(div);
+        });
+    }
 
     function loadMessages() {
         fetch(`/chat/${encodeURIComponent(room)}`)
@@ -69,6 +89,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    loadMessages();
-    setInterval(loadMessages, 5000); // Poll every 5s
+    async function refresh() {
+        await refreshUserPresence();
+        loadMessages();
+        loadUsers();
+    }
+
+    await refresh();
+    setInterval(refresh, 5000); // Poll every 5s
 });

@@ -8,17 +8,25 @@
   </head>
   <body>
     <h1 id="room-title">Chat Room</h1>
-    <div id="messages"></div>
-    <form id="chat-form">
-      <input
-        type="text"
-        id="message-input"
-        placeholder="Type a message..."
-        autocomplete="off"
-        required
-      />
-      <button type="submit">Send</button>
-    </form>
+    <div id="page-container">
+      <div id="chat-center">
+        <div id="messages"></div>
+        <form id="chat-form">
+          <input
+            type="text"
+            id="message-input"
+            placeholder="Type a message..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit">Send</button>
+        </form>
+      </div>
+      <div id="user-list-container">
+        <h3>Users in room</h3>
+        <div id="user-list"></div>
+      </div>
+    </div>
     <script src="chat.js"></script>
   </body>
 </html>
