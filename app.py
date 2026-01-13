@@ -222,7 +222,11 @@ def chat_room(room):
     if since:
         try:
             since_time = datetime.fromisoformat(since)
-            new_msgs = [m for m in messages[room] if datetime.fromisoformat(m["timestamp"]) > since_time]
+            new_msgs = [
+                m
+                for m in messages[room]
+                if datetime.fromisoformat(m["timestamp"]) > since_time
+            ]
             return jsonify(new_msgs)
         except ValueError:
             pass  # Invalid timestamp format; fall back to returning all

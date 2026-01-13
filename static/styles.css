@@ -16,7 +16,9 @@ body {
 }
 
 /* === Headings === */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: #ffffff;
   text-align: center;
   margin-bottom: 15px;
@@ -243,7 +245,9 @@ a:visited {
   color: #79c4ff;
 }
 
-#username-input, #new-room-name, #message-input {
+#username-input,
+#new-room-name,
+#message-input {
   background-color: #ffffff;
   color: #444;
 }

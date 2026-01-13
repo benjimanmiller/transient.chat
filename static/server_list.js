@@ -31,64 +31,64 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.querySelectorAll('.collapsible').forEach(heading => {
         heading.addEventListener('click', () => {
-        const content = heading.nextElementSibling;
-        const isOpen = content.style.display === 'block';
-        content.style.display = isOpen ? 'none' : 'block';
-        heading.textContent = (isOpen ? '▶' : '▼') + heading.textContent.slice(1);
+            const content = heading.nextElementSibling;
+            const isOpen = content.style.display === 'block';
+            content.style.display = isOpen ? 'none' : 'block';
+            heading.textContent = (isOpen ? '▶' : '▼') + heading.textContent.slice(1);
         });
     });
 
-fetch("/rooms")
-    .then(response => response.json())
-    .then(async data => {
-        const { regional, topical, public: publicRooms } = data;
+    fetch("/rooms")
+        .then(response => response.json())
+        .then(async data => {
+            const { regional, topical, public: publicRooms } = data;
 
-        const regionalList = document.getElementById('regional-rooms');
-        const topicalList = document.getElementById('topical-rooms');
-        const publicList = document.getElementById('public-rooms');
+            const regionalList = document.getElementById('regional-rooms');
+            const topicalList = document.getElementById('topical-rooms');
+            const publicList = document.getElementById('public-rooms');
 
-        const userSet = new Set(); // Track unique users
+            const userSet = new Set(); // Track unique users
 
-        const createRoomItem = async (room) => {
-            let userCount = 0;
-            try {
-                const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
-                const users = await res.json();
-                if (Array.isArray(users)) {
-                    userCount = users.length;
-                    users.forEach(u => userSet.add(u));
+            const createRoomItem = async (room) => {
+                let userCount = 0;
+                try {
+                    const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
+                    const users = await res.json();
+                    if (Array.isArray(users)) {
+                        userCount = users.length;
+                        users.forEach(u => userSet.add(u));
+                    }
+                } catch (e) {
+                    console.error(`Failed to fetch users for room ${room}:`, e);
                 }
-            } catch (e) {
-                console.error(`Failed to fetch users for room ${room}:`, e);
+
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `/chat.html?room=${encodeURIComponent(room)}`;
+                a.textContent = `${room}  ( ${userCount} )`;
+                li.appendChild(a);
+                return li;
+            };
+
+            // Populate rooms
+            for (const room of regional) {
+                const li = await createRoomItem(room);
+                regionalList.appendChild(li);
             }
 
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `/chat.html?room=${encodeURIComponent(room)}`;
-            a.textContent = `${room}  ( ${userCount} )`;
-            li.appendChild(a);
-            return li;
-        };
+            for (const room of topical) {
+                const li = await createRoomItem(room);
+                topicalList.appendChild(li);
+            }
 
-        // Populate rooms
-        for (const room of regional) {
-            const li = await createRoomItem(room);
-            regionalList.appendChild(li);
-        }
+            for (const room of publicRooms) {
+                const li = await createRoomItem(room);
+                publicList.appendChild(li);
+            }
 
-        for (const room of topical) {
-            const li = await createRoomItem(room);
-            topicalList.appendChild(li);
-        }
-
-        for (const room of publicRooms) {
-            const li = await createRoomItem(room);
-            publicList.appendChild(li);
-        }
-
-        // Update total user count
-        document.getElementById('user-count').textContent = `Users Online ( ${userSet.size} )`;
-    });
+            // Update total user count
+            document.getElementById('user-count').textContent = `Users Online ( ${userSet.size} )`;
+        });
 
     document.getElementById('create-room-btn').addEventListener('click', () => {
         const roomName = document.getElementById('new-room-name').value.trim();
@@ -99,24 +99,24 @@ fetch("/rooms")
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: roomName })
         })
-        .then(response => {
-            if (!response.ok) throw new Error('Room creation failed.');
-            return response.json();
-        })
-        .then(data => {
-            const publicList = document.getElementById('public-rooms');
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `/chat.html?room=${encodeURIComponent(data.name)}`;
-            a.textContent = data.name;
-            li.appendChild(a);
-            publicList.appendChild(li);
-            document.getElementById('new-room-name').value = '';
+            .then(response => {
+                if (!response.ok) throw new Error('Room creation failed.');
+                return response.json();
+            })
+            .then(data => {
+                const publicList = document.getElementById('public-rooms');
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `/chat.html?room=${encodeURIComponent(data.name)}`;
+                a.textContent = data.name;
+                li.appendChild(a);
+                publicList.appendChild(li);
+                document.getElementById('new-room-name').value = '';
 
-            // Automatically redirect to new room
-            window.location.href = `/chat.html?room=${encodeURIComponent(data.name)}`;
-        })
-        .catch(err => alert(err.message));
+                // Automatically redirect to new room
+                window.location.href = `/chat.html?room=${encodeURIComponent(data.name)}`;
+            })
+            .catch(err => alert(err.message));
     });
 });
 
