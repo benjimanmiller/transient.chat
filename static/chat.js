@@ -1,10 +1,33 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
     const room = params.get("room");
     const username = localStorage.getItem("username");
+    const userKey = localStorage.getItem("userKey");
 
-    if (!room || !username) {
-        alert("Missing room or username.");
+    if (!room || !username || !userKey) {
+        alert("Missing room or user credentials.");
+        window.location.href = '/';
+        return;
+    }
+
+    // Validate credentials
+    try {
+        const res = await fetch('/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, key: userKey })
+        });
+        if (!res.ok) {
+            localStorage.clear();
+            alert("User validation failed.");
+            window.location.href = '/';
+            return;
+        }
+    } catch (err) {
+        console.error('Validation error:', err);
+        localStorage.clear();
+        alert("Validation failed.");
+        window.location.href = '/';
         return;
     }
 

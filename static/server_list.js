@@ -1,8 +1,32 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const username = localStorage.getItem('username');
     const userKey = localStorage.getItem('userKey');
-    const userInfoEl = document.getElementById('user-info');
 
+    // Validate credentials before proceeding
+    if (!username || !userKey) {
+        window.location.href = '/';
+        return;
+    }
+
+    try {
+        const response = await fetch('/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, key: userKey })
+        });
+        if (!response.ok) {
+            localStorage.clear();
+            window.location.href = '/';
+            return;
+        }
+    } catch (err) {
+        console.error('Validation failed:', err);
+        localStorage.clear();
+        window.location.href = '/';
+        return;
+    }
+
+    const userInfoEl = document.getElementById('user-info');
     userInfoEl.textContent = `Logged in as: ${username} (Key: ${userKey})`;
 
     document.querySelectorAll('.collapsible').forEach(heading => {
