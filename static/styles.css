@@ -147,19 +147,6 @@ button:hover {
   border-bottom: 1px solid #333;
 }
 
-/* Responsive user panel stack */
-@media (max-width: 900px) {
-  #page-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #user-list-container {
-    width: 100%;
-    max-width: 400px;
-  }
-}
-
 /* === Shared Forms/Input Styles === */
 input[type="text"],
 input[type="password"] {
