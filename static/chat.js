@@ -21,6 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 messagesDiv.innerHTML = "";
                 data.forEach(msg => {
                     const div = document.createElement("div");
+                    div.classList.add("message");
+                    if (msg.username === username) {
+                        div.classList.add("my-message");
+                    }
                     div.textContent = `${msg.username}: ${msg.text}`;
                     messagesDiv.appendChild(div);
                 });

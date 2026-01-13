@@ -3,6 +3,9 @@ from flask import *
 from flask_cors import CORS
 import random
 import string
+import threading
+import time
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app) 
@@ -22,8 +25,19 @@ regional_chat_rooms = [
 ]
 
 topical_chat_rooms = [
-    "Tech", "Science", "Gaming", "Movies", "Music", "Books", "Current Events", 
-]   
+    "Tech", "Science", "Gaming", "Movies", "Music", "Books", "Current Events", "Sports",
+    "Travel", "Food & Cooking", "Health & Fitness", "History", "Philosophy", "Art & Design",
+    "Programming", "Startups", "Investing", "Cryptocurrency", "Psychology", "Education",
+    "Parenting", "DIY & Home Improvement", "Photography", "Fashion", "Automotive",
+    "Theater & Performing Arts", "Pets & Animals", "Space Exploration", "Climate Change",
+    "Entrepreneurship", "Relationships", "Spirituality", "Mindfulness & Meditation",
+    "Comics & Manga", "Anime", "Board Games", "Card Games", "Tabletop RPGs", "Language Learning",
+    "Economics", "Politics", "Legal & Law", "Careers & Job Hunting", "College Life",
+    "Fan Theories", "Science Fiction", "Fantasy", "Productivity", "Machine Learning",
+    "Artificial Intelligence", "Web Development", "Mobile Apps", "Cybersecurity",
+    "3D Printing", "Virtual Reality", "Augmented Reality", "Biohacking",
+    "Home Automation", "Ethics in Tech", "Sustainable Living"
+]
 
 messages = {}
 
@@ -95,13 +109,28 @@ def chat_room(room):
         data = request.json
         message = {
             'username': data.get('username'),
-            'text': data.get('text')
+            'text': data.get('text'),
+            'timestamp': datetime.utcnow().isoformat()
         }
         messages[room].append(message)
         if len(messages[room]) > 100:
             messages[room] = messages[room][-100:]
 
     return jsonify(messages[room])
+
+# Background cleanup thread
+def cleanup_messages():
+    while True:
+        cutoff = datetime.utcnow() - timedelta(minutes=1)
+        for room, room_messages in messages.items():
+            messages[room] = [
+                msg for msg in room_messages
+                if datetime.fromisoformat(msg['timestamp']) > cutoff
+            ]
+        time.sleep(60)  # Run every 60 seconds
+
+# Start the cleanup thread on app launch
+threading.Thread(target=cleanup_messages, daemon=True).start()
 
 if __name__ == '__main__':
     app.run(debug=True)
