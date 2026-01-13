@@ -38,5 +38,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 li.appendChild(a);
                 topicalList.appendChild(li);
             });
+
+            const publicList = document.getElementById('public-rooms');
+            public.forEach(room => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `/chat.html?room=${encodeURIComponent(room)}`;
+                a.textContent = room;
+                li.appendChild(a);
+                topicalList.appendChild(li);
+            });
         });
+
+    document.getElementById('create-room-btn').addEventListener('click', () => {
+        const roomName = document.getElementById('new-room-name').value.trim();
+        if (!roomName) return alert('Room name cannot be empty.');
+
+        fetch('/rooms', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: roomName })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Room creation failed.');
+            return response.json();
+        })
+        .then(data => {
+            const publicList = document.getElementById('public-rooms');
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `/chat.html?room=${encodeURIComponent(data.name)}`;
+            a.textContent = data.name;
+            li.appendChild(a);
+            publicList.appendChild(li);
+            document.getElementById('new-room-name').value = '';
+        })
+        .catch(err => alert(err.message));
+    });
 });
+

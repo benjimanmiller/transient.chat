@@ -1,4 +1,3 @@
-
 from flask import *
 from flask_cors import CORS
 import random
@@ -38,6 +37,8 @@ topical_chat_rooms = [
     "3D Printing", "Virtual Reality", "Augmented Reality", "Biohacking",
     "Home Automation", "Ethics in Tech", "Sustainable Living"
 ]
+
+public_chat_rooms = []
 
 messages = {}
 
@@ -92,11 +93,21 @@ def validate():
         return jsonify({'status': 'valid'})
     return jsonify({'error': 'Invalid credentials'}), 403
 
-@app.route('/rooms')
-def get_rooms():
+@app.route('/rooms', methods=['GET', 'POST'])
+def get_or_create_rooms():
+    if request.method == 'POST':
+        data = request.json
+        room_name = data.get('name', '').strip()
+        if not room_name:
+            return jsonify({'error': 'Room name required'}), 400
+        if room_name in regional_chat_rooms or room_name in topical_chat_rooms or room_name in public_chat_rooms:
+            return jsonify({'error': 'Room already exists'}), 400
+        public_chat_rooms.append(room_name)
+        return jsonify({'name': room_name})
     return jsonify({
         'regional': regional_chat_rooms,
-        'topical': topical_chat_rooms
+        'topical': topical_chat_rooms,
+        'public': public_chat_rooms
     })
 
 @app.route('/chat/<room>', methods=['GET', 'POST'])
@@ -134,3 +145,4 @@ threading.Thread(target=cleanup_messages, daemon=True).start()
 
 if __name__ == '__main__':
     app.run(debug=True)
+
