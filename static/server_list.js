@@ -47,13 +47,17 @@ fetch("/rooms")
         const topicalList = document.getElementById('topical-rooms');
         const publicList = document.getElementById('public-rooms');
 
-        // Helper to create room list item with user count
+        const userSet = new Set(); // Track unique users
+
         const createRoomItem = async (room) => {
             let userCount = 0;
             try {
                 const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
                 const users = await res.json();
-                userCount = Array.isArray(users) ? users.length : 0;
+                if (Array.isArray(users)) {
+                    userCount = users.length;
+                    users.forEach(u => userSet.add(u));
+                }
             } catch (e) {
                 console.error(`Failed to fetch users for room ${room}:`, e);
             }
@@ -66,7 +70,7 @@ fetch("/rooms")
             return li;
         };
 
-        // Populate all room categories with user counts
+        // Populate rooms
         for (const room of regional) {
             const li = await createRoomItem(room);
             regionalList.appendChild(li);
@@ -81,6 +85,9 @@ fetch("/rooms")
             const li = await createRoomItem(room);
             publicList.appendChild(li);
         }
+
+        // Update total user count
+        document.getElementById('user-count').textContent = `Users Online ( ${userSet.size} )`;
     });
 
     document.getElementById('create-room-btn').addEventListener('click', () => {

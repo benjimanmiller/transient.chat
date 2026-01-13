@@ -9,16 +9,36 @@
   <body>
     <h1><strong>Transient.chat</strong> Server List</h1>
     <div id="user-info"></div>
+
+    <div id="user-count" style="margin-top: 8px; font-weight: bold"></div>
+
     <div id="chat-rooms">
       <h2 class="collapsible">▶ US Regional Rooms</h2>
-      <ul id="regional-rooms" class="collapsible-content" style="display: none;"></ul>
+      <ul
+        id="regional-rooms"
+        class="collapsible-content"
+        style="display: none"
+      ></ul>
       <h2 class="collapsible">▶ Topical Rooms</h2>
-      <ul id="topical-rooms" class="collapsible-content" style="display: none;"></ul>
+      <ul
+        id="topical-rooms"
+        class="collapsible-content"
+        style="display: none"
+      ></ul>
       <h2 class="collapsible">▶ User Created Public Rooms</h2>
-      <ul id="public-rooms" class="collapsible-content" style="display: none;"></ul>
+      <ul
+        id="public-rooms"
+        class="collapsible-content"
+        style="display: none"
+      ></ul>
       <br />
+
       <div id="create-room-form">
-        <input type="text" id="new-room-name" placeholder="Enter new public room name" />
+        <input
+          type="text"
+          id="new-room-name"
+          placeholder="Enter new public room name"
+        />
         <br />
         <button id="create-room-btn">Create Public Room</button>
       </div>
@@ -26,4 +46,3 @@
     <script src="server_list.js"></script>
   </body>
 </html>
-
