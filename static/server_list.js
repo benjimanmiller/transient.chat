@@ -14,41 +14,41 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    fetch("/rooms")
-        .then(response => response.json())
-        .then(data => {
-            const { regional, topical } = data;
+fetch("/rooms")
+    .then(response => response.json())
+    .then(data => {
+        const { regional, topical, public: publicRooms } = data;
 
-            const regionalList = document.getElementById('regional-rooms');
-            regional.forEach(room => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = `/chat.html?room=${encodeURIComponent(room)}`;
-                a.textContent = room;
-                li.appendChild(a);
-                regionalList.appendChild(li);
-            });
-
-            const topicalList = document.getElementById('topical-rooms');
-            topical.forEach(room => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = `/chat.html?room=${encodeURIComponent(room)}`;
-                a.textContent = room;
-                li.appendChild(a);
-                topicalList.appendChild(li);
-            });
-
-            const publicList = document.getElementById('public-rooms');
-            public.forEach(room => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = `/chat.html?room=${encodeURIComponent(room)}`;
-                a.textContent = room;
-                li.appendChild(a);
-                topicalList.appendChild(li);
-            });
+        const regionalList = document.getElementById('regional-rooms');
+        regional.forEach(room => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `/chat.html?room=${encodeURIComponent(room)}`;
+            a.textContent = room;
+            li.appendChild(a);
+            regionalList.appendChild(li);
         });
+
+        const topicalList = document.getElementById('topical-rooms');
+        topical.forEach(room => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `/chat.html?room=${encodeURIComponent(room)}`;
+            a.textContent = room;
+            li.appendChild(a);
+            topicalList.appendChild(li);
+        });
+
+        const publicList = document.getElementById('public-rooms');
+        publicRooms.forEach(room => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `/chat.html?room=${encodeURIComponent(room)}`;
+            a.textContent = room;
+            li.appendChild(a);
+            publicList.appendChild(li);
+        });
+    });
 
     document.getElementById('create-room-btn').addEventListener('click', () => {
         const roomName = document.getElementById('new-room-name').value.trim();
@@ -72,6 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
             li.appendChild(a);
             publicList.appendChild(li);
             document.getElementById('new-room-name').value = '';
+
+            // Automatically redirect to new room
+            window.location.href = `/chat.html?room=${encodeURIComponent(data.name)}`;
         })
         .catch(err => alert(err.message));
     });
