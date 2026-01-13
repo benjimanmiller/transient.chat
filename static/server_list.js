@@ -40,38 +40,47 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 fetch("/rooms")
     .then(response => response.json())
-    .then(data => {
+    .then(async data => {
         const { regional, topical, public: publicRooms } = data;
 
         const regionalList = document.getElementById('regional-rooms');
-        regional.forEach(room => {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `/chat.html?room=${encodeURIComponent(room)}`;
-            a.textContent = room;
-            li.appendChild(a);
-            regionalList.appendChild(li);
-        });
-
         const topicalList = document.getElementById('topical-rooms');
-        topical.forEach(room => {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `/chat.html?room=${encodeURIComponent(room)}`;
-            a.textContent = room;
-            li.appendChild(a);
-            topicalList.appendChild(li);
-        });
-
         const publicList = document.getElementById('public-rooms');
-        publicRooms.forEach(room => {
+
+        // Helper to create room list item with user count
+        const createRoomItem = async (room) => {
+            let userCount = 0;
+            try {
+                const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
+                const users = await res.json();
+                userCount = Array.isArray(users) ? users.length : 0;
+            } catch (e) {
+                console.error(`Failed to fetch users for room ${room}:`, e);
+            }
+
             const li = document.createElement('li');
             const a = document.createElement('a');
             a.href = `/chat.html?room=${encodeURIComponent(room)}`;
-            a.textContent = room;
+            a.textContent = `${room}  ( ${userCount} )`;
             li.appendChild(a);
+            return li;
+        };
+
+        // Populate all room categories with user counts
+        for (const room of regional) {
+            const li = await createRoomItem(room);
+            regionalList.appendChild(li);
+        }
+
+        for (const room of topical) {
+            const li = await createRoomItem(room);
+            topicalList.appendChild(li);
+        }
+
+        for (const room of publicRooms) {
+            const li = await createRoomItem(room);
             publicList.appendChild(li);
-        });
+        }
     });
 
     document.getElementById('create-room-btn').addEventListener('click', () => {

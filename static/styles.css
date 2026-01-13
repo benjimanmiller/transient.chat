@@ -247,3 +247,10 @@ a:visited {
   background-color: #ffffff;
   color: #444;
 }
+
+li a {
+  display: block;
+  text-align: center;
+  color: #ffffff;
+  text-decoration: underline;
+}
