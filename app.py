@@ -218,6 +218,15 @@ def chat_room(room):
         if len(messages[room]) > 100:
             messages[room] = messages[room][-100:]
 
+    since = request.args.get("since")
+    if since:
+        try:
+            since_time = datetime.fromisoformat(since)
+            new_msgs = [m for m in messages[room] if datetime.fromisoformat(m["timestamp"]) > since_time]
+            return jsonify(new_msgs)
+        except ValueError:
+            pass  # Invalid timestamp format; fall back to returning all
+
     return jsonify(messages[room])
 
 

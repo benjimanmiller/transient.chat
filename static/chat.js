@@ -57,11 +57,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    let lastTimestamp = null;
+
     function loadMessages() {
-        fetch(`/chat/${encodeURIComponent(room)}`)
+        const url = `/chat/${encodeURIComponent(room)}` + (lastTimestamp ? `?since=${encodeURIComponent(lastTimestamp)}` : "");
+        fetch(url)
             .then(res => res.json())
             .then(data => {
-                messagesDiv.innerHTML = "";
+                if (!Array.isArray(data) || data.length === 0) return;
+
                 data.forEach(msg => {
                     const div = document.createElement("div");
                     div.classList.add("message");
@@ -71,7 +75,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     div.textContent = `${msg.username}: ${msg.text}`;
                     messagesDiv.appendChild(div);
                 });
+
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                lastTimestamp = data[data.length - 1].timestamp;
             });
     }
 
@@ -97,5 +103,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await refresh();
-    setInterval(refresh, 5000); // Poll every 5s
+    setInterval(refresh, 1000); // Poll every 5s
 });
