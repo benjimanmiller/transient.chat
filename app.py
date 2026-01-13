@@ -121,7 +121,7 @@ def chat_room(room):
 # Background cleanup thread
 def cleanup_messages():
     while True:
-        cutoff = datetime.utcnow() - timedelta(minutes=1)
+        cutoff = datetime.utcnow() - timedelta(hours=1)
         for room, room_messages in messages.items():
             messages[room] = [
                 msg for msg in room_messages
