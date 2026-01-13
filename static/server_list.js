@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             // Update total user count
-            document.getElementById('user-count').textContent = `Users Online ( ${userSet.size} )`;
+            document.getElementById('user-count').textContent = `Users Chatting ( ${userSet.size} )`;
         });
 
     document.getElementById('create-room-btn').addEventListener('click', () => {
