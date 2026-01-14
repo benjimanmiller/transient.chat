@@ -92,7 +92,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             body: JSON.stringify({ username, text })
         }).then(() => {
             input.value = "";
-            loadMessages();
         });
     });
 
