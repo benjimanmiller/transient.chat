@@ -58,6 +58,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     let lastTimestamp = null;
+    let windowFocused = true;
+    let unreadCount = 0;
+
+    window.addEventListener('focus', () => {
+        windowFocused = true;
+        unreadCount = 0;
+        document.title = `${room}`;
+    });
+
+    window.addEventListener('blur', () => {
+        windowFocused = false;
+    });
 
     function loadMessages() {
         const url = `/chat/${encodeURIComponent(room)}` + (lastTimestamp ? `?since=${encodeURIComponent(lastTimestamp)}` : "");
@@ -78,6 +90,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 lastTimestamp = data[data.length - 1].timestamp;
+
+                if (!windowFocused) {
+                    unreadCount += data.length;
+                    document.title = `${room} (${unreadCount})`;
+                }
             });
     }
 

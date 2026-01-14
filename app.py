@@ -265,23 +265,23 @@ def cleanup_messages():
     while True:
 
         # Culls chat messages
-        cutoff = datetime.utcnow() - timedelta(hours=1)
+        message_cutoff = datetime.utcnow() - timedelta(hours=1)
         for room, room_messages in messages.items():
             messages[room] = [
                 msg
                 for msg in room_messages
-                if datetime.fromisoformat(msg["timestamp"]) > cutoff
+                if datetime.fromisoformat(msg["timestamp"]) > message_cutoff
             ]
 
         # Removes inactive users from rooms
-        user_cutoff = datetime.utcnow() - timedelta(minutes=15)
+        user_cutoff = datetime.utcnow() - timedelta(minutes=1)
         for room in list(room_users.keys()):
             room_users[room] = {
                 u: t
                 for u, t in room_users[room].items()
                 if datetime.fromisoformat(t) > user_cutoff
             }
-
+        
         # Culls public chat rooms
         for room in list(public_chat_rooms):
             last_active_times = room_users.get(room, {}).values()
