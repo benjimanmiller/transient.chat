@@ -1,3 +1,9 @@
+const params = new URLSearchParams(window.location.search);
+const room = params.get("room");
+if (room) {
+    document.title = `${room}`;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
     const room = params.get("room");
