@@ -83,16 +83,44 @@ document.addEventListener("DOMContentLoaded", async () => {
         return text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
     }
 
+    function cleanExpiredMessages() {
+        const now = Date.now();
+        const oneHourAgo = now - 60 * 60 * 1000;
+        const messageDivs = document.querySelectorAll("#messages .message");
+
+        messageDivs.forEach(msgDiv => {
+            const ts = msgDiv.getAttribute("data-timestamp");
+            if (!ts) return;
+
+            const cleanedTs = ts.replace(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}).+$/, '$1Z');
+            const parsedTimestamp = Date.parse(cleanedTs);
+            if (isNaN(parsedTimestamp)) return;
+
+            if (parsedTimestamp < oneHourAgo) {
+                msgDiv.remove();
+            }
+        });
+    }
+
     function loadMessages() {
         const url = `/chat/${encodeURIComponent(room)}` + (lastTimestamp ? `?since=${encodeURIComponent(lastTimestamp)}` : "");
         fetch(url)
             .then(res => res.json())
             .then(data => {
-                if (!Array.isArray(data) || data.length === 0) return;
+                if (!Array.isArray(data)) return;
 
-                data.forEach(msg => {
+                const now = Date.now();
+                const oneHourAgo = now - 60 * 60 * 1000;
+
+                const newMessages = data.filter(msg => {
+                    const msgTime = new Date(msg.timestamp).getTime();
+                    return msgTime >= oneHourAgo;
+                });
+
+                newMessages.forEach(msg => {
                     const div = document.createElement("div");
                     div.classList.add("message");
+                    div.setAttribute("data-timestamp", msg.timestamp);
                     if (msg.username === username) {
                         div.classList.add("my-message");
                     }
@@ -100,11 +128,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                     messagesDiv.appendChild(div);
                 });
 
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                lastTimestamp = data[data.length - 1].timestamp;
+                if (newMessages.length > 0) {
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    lastTimestamp = newMessages[newMessages.length - 1].timestamp;
+                }
 
-                if (!windowFocused) {
-                    unreadCount += data.length;
+                if (!windowFocused && newMessages.length > 0) {
+                    unreadCount += newMessages.length;
                     document.title = `${room} (${unreadCount})`;
                 }
             });
@@ -128,8 +158,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         await refreshUserPresence();
         loadMessages();
         loadUsers();
+        cleanExpiredMessages();
     }
 
     await refresh();
-    setInterval(refresh, 1000); // Poll every 5s
+    setInterval(refresh, 1000); // Poll every second
 });
