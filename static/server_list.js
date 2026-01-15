@@ -107,3 +107,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 });
 
+// Force reload if coming back via bfcache (e.g., Back button)
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
