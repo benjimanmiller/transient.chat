@@ -79,6 +79,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         windowFocused = false;
     });
 
+    function linkify(text) {
+        return text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    }
+
     function loadMessages() {
         const url = `/chat/${encodeURIComponent(room)}` + (lastTimestamp ? `?since=${encodeURIComponent(lastTimestamp)}` : "");
         fetch(url)
@@ -92,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     if (msg.username === username) {
                         div.classList.add("my-message");
                     }
-                    div.textContent = `${msg.username}: ${msg.text}`;
+                    div.innerHTML = `<strong>${msg.username}:</strong> ${linkify(msg.text)}`;
                     messagesDiv.appendChild(div);
                 });
 
