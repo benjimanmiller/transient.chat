@@ -161,7 +161,10 @@ def register():
         return jsonify({"error": "Username taken"}), 409
 
     user_key = generate_user_key()
-    user_sessions[username] = user_key
+    user_sessions[username] = {
+        "key": user_key,
+        "last_active": datetime.utcnow().isoformat()
+    }
 
     return jsonify({"username": username, "key": user_key})
 
@@ -172,7 +175,9 @@ def validate():
     username = data.get("username")
     key = data.get("key")
 
-    if username and key and user_sessions.get(username) == key:
+    session = user_sessions.get(username)
+    if session and session["key"] == key:
+        session["last_active"] = datetime.utcnow().isoformat()
         return jsonify({"status": "valid"})
     return jsonify({"error": "Invalid credentials"}), 403
 
@@ -274,23 +279,30 @@ def cleanup_messages():
             ]
 
         # Removes inactive users from rooms
-        user_cutoff = datetime.utcnow() - timedelta(minutes=1)
+        inactive_cutoff = datetime.utcnow() - timedelta(minutes=1)
         for room in list(room_users.keys()):
             room_users[room] = {
                 u: t
                 for u, t in room_users[room].items()
-                if datetime.fromisoformat(t) > user_cutoff
+                if datetime.fromisoformat(t) > inactive_cutoff
             }
-        
-        # Culls public chat rooms
+
+        # Culls inactive chat rooms
         for room in list(public_chat_rooms):
             last_active_times = room_users.get(room, {}).values()
             if not last_active_times or all(
-                datetime.fromisoformat(ts) < user_cutoff for ts in last_active_times
+                datetime.fromisoformat(ts) < inactive_cutoff for ts in last_active_times
             ):
                 public_chat_rooms.remove(room)
                 messages.pop(room, None)
                 room_users.pop(room, None)
+
+        # Remove inactive user sessions
+        user_cutoff = datetime.utcnow() - timedelta(days=3)
+        for user, session in list(user_sessions.items()):
+            last_seen = datetime.fromisoformat(session["last_active"])
+            if last_seen < user_cutoff:
+                user_sessions.pop(user, None)
 
         time.sleep(60)  # Run every 60 seconds
 
