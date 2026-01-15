@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!room || !username || !userKey) {
         alert("Missing room or user credentials.");
-        window.location.href = '/';
+        const url = `/index.html${room ? '?room=' + encodeURIComponent(room) : ''}`;
+        window.location.href = url;
         return;
     }
 
@@ -33,7 +34,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error('Validation error:', err);
         localStorage.clear();
         alert("Validation failed.");
-        window.location.href = '/';
+        const redirectUrl = `/index.html${room ? '?room=' + encodeURIComponent(room) : ''}`;
+        window.location.href = redirectUrl;
         return;
     }
 

@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const storedUsername = localStorage.getItem('username');
     const storedKey = localStorage.getItem('userKey');
 
+    const params = new URLSearchParams(window.location.search);
+    const room = params.get('room');
+
     // Auto-forward if valid session is stored
     if (storedUsername && storedKey) {
         try {
@@ -12,7 +15,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             if (response.ok) {
-                window.location.href = '/server_list.html';
+                window.location.href = room
+                    ? `/chat.html?room=${encodeURIComponent(room)}`
+                    : '/server_list.html';
                 return;
             }
         } catch (err) {
@@ -22,12 +27,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // If not validated, set up login as normal
     const startButton = document.getElementById('start-chat-button');
-
     const usernameInput = document.getElementById('username-input');
+
     if (usernameInput) {
         usernameInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Optional: prevent default form submit
+                event.preventDefault();
                 startButton.click();
             }
         });
@@ -35,7 +40,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (startButton) {
         startButton.addEventListener('click', async () => {
-            const usernameInput = document.getElementById('username-input');
             const username = usernameInput.value.trim();
 
             if (!username) {
@@ -47,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const response = await fetch('/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username })
+                    body: JSON.stringify({ username }),
                 });
 
                 if (!response.ok) {
@@ -59,7 +63,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const data = await response.json();
                 localStorage.setItem('username', data.username);
                 localStorage.setItem('userKey', data.key);
-                window.location.href = '/server_list.html';
+
+                window.location.href = room
+                    ? `/chat.html?room=${encodeURIComponent(room)}`
+                    : '/server_list.html';
             } catch (error) {
                 console.error('Registration error:', error);
                 alert('An error occurred.');
