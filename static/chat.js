@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const username = localStorage.getItem("username");
     const userKey = localStorage.getItem("userKey");
     let firstLoad = true;
+    let isRefreshing = false;
 
     if (!room || !username || !userKey) {
         alert("Missing room or user credentials.");
@@ -70,30 +71,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     let lastUserList = [];
-
-    async function loadUsers() {
-        const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
-        const userList = await res.json();
-        usersDiv.innerHTML = "";
-
-        const joined = userList.filter(user => !lastUserList.includes(user));
-        const left = lastUserList.filter(user => !userList.includes(user));
-
-        if (!firstLoad && soundEnabled) {
-            if (joined.length > 0) sounds.in.play();
-            if (left.length > 0) sounds.out.play();
-        }
-
-        lastUserList = userList;
-
-        userList.forEach(user => {
-            const div = document.createElement("div");
-            div.textContent = user;
-            usersDiv.appendChild(div);
-        });
-    }
-
     let lastTimestamp = null;
+    const seenMessageTimestamps = new Set();
+
     let windowFocused = true;
     let unreadCount = 0;
 
@@ -126,7 +106,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (parsedTimestamp < oneHourAgo) {
                 msgDiv.remove();
+                seenMessageTimestamps.delete(ts);
             }
+        });
+    }
+
+    async function loadUsers() {
+        const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
+        const userList = await res.json();
+        usersDiv.innerHTML = "";
+
+        const joined = userList.filter(user => !lastUserList.includes(user));
+        const left = lastUserList.filter(user => !userList.includes(user));
+
+        if (!firstLoad && soundEnabled) {
+            if (joined.length > 0) sounds.in.play();
+            if (left.length > 0) sounds.out.play();
+        }
+
+        lastUserList = userList;
+
+        userList.forEach(user => {
+            const div = document.createElement("div");
+            div.textContent = user;
+            usersDiv.appendChild(div);
         });
     }
 
@@ -143,14 +146,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         const newMessages = data.filter(msg => {
             const msgTime = new Date(msg.timestamp).getTime();
             if (isNaN(msgTime)) return false;
-            if (firstLoad) return true; // On first load, show messages regardless of timestamp
+            if (firstLoad) return true;
             return msgTime >= oneHourAgo;
         });
 
         newMessages.forEach(msg => {
+            // Skip if already rendered
+            if (seenMessageTimestamps.has(msg.timestamp)) return;
+
             const div = document.createElement("div");
             div.classList.add("message");
             div.setAttribute("data-timestamp", msg.timestamp);
+            seenMessageTimestamps.add(msg.timestamp);
+
             if (msg.username === username) {
                 div.classList.add("my-message");
             }
@@ -184,18 +192,28 @@ document.addEventListener("DOMContentLoaded", async () => {
             body: JSON.stringify({ username, text })
         }).then(() => {
             input.value = "";
-            refresh(); // Force a refresh to fetch the new message from server
+            refresh(); // force fetch after post to ensure sync
         });
     });
 
     async function refresh() {
-        await refreshUserPresence();
-        await loadMessages();
-        await loadUsers();
-        cleanExpiredMessages();
-        firstLoad = false; // Only flip after full refresh cycle
+        if (isRefreshing) return;
+        isRefreshing = true;
+
+        try {
+            await refreshUserPresence();
+            await loadMessages();
+            await loadUsers();
+            cleanExpiredMessages();
+        } catch (e) {
+            console.error("Refresh error:", e);
+        } finally {
+            firstLoad = false;
+            isRefreshing = false;
+        }
     }
 
+    // First full load, then enable polling
     await refresh();
     setInterval(refresh, 1000);
 });
