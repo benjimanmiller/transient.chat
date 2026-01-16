@@ -5,6 +5,9 @@ import string
 import threading
 import time
 from datetime import datetime, timedelta
+from functools import wraps
+import os
+from flask import request, Response
 
 app = Flask(__name__)
 CORS(app)
@@ -119,6 +122,29 @@ messages = {}
 
 room_users = {}
 
+banned_ips = set()
+
+banned_usernames = set()
+
+user_ips = {}
+
+def check_auth(username, password):
+    return (
+        username == os.getenv("ADMIN_USERNAME") and
+        password == os.getenv("ADMIN_PASSWORD")
+    )
+
+def authenticate():
+    return Response("Access Denied", 401, {"WWW-Authenticate": 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 @app.route("/")
 def index():
@@ -153,18 +179,23 @@ def generate_user_key(length=16):
 def register():
     data = request.json
     username = data.get("username")
+    user_ip = request.remote_addr
 
     if not username:
         return jsonify({"error": "No username provided"}), 400
-
     if username in user_sessions:
         return jsonify({"error": "Username taken"}), 409
+    if user_ip in banned_ips:
+        return jsonify({"error": "IP banned"}), 403
+    if username in banned_usernames:
+        return jsonify({"error": "Username banned"}), 403
 
     user_key = generate_user_key()
     user_sessions[username] = {
         "key": user_key,
-        "last_active": datetime.utcnow().isoformat()
+        "last_active": datetime.utcnow().isoformat(),
     }
+    user_ips[username] = user_ip
 
     return jsonify({"username": username, "key": user_key})
 
@@ -222,17 +253,26 @@ def get_or_create_rooms():
 @app.route("/chat/<room>", methods=["GET", "POST"])
 def chat_room(room):
     room = room.strip()
-    if room not in messages:
-        messages[room] = []
 
+    # Reject banned IPs or users
     if request.method == "POST":
         data = request.json
+        username = data.get("username")
+        user_ip = request.remote_addr
+
+        if (
+            user_ip in banned_ips
+            or username in banned_usernames
+            or username in user_ips and user_ips[username] in banned_ips
+        ):
+            return jsonify({"error": "banned"}), 403
+
         message = {
-            "username": data.get("username"),
+            "username": username,
             "text": data.get("text"),
             "timestamp": datetime.utcnow().isoformat(),
         }
-        messages[room].append(message)
+        messages.setdefault(room, []).append(message)
         if len(messages[room]) > 100:
             messages[room] = messages[room][-100:]
 
@@ -264,6 +304,76 @@ def room_user_list(room):
     users = room_users.get(room, {})
     return jsonify(list(users.keys()))
 
+
+@app.route("/admin/users", methods=["GET"])
+@requires_auth
+def admin_users():
+    return jsonify(
+        [
+            {
+                "username": u,
+                "ip": user_ips.get(u, "unknown"),
+                "last_active": s["last_active"],
+            }
+            for u, s in user_sessions.items()
+        ]
+    )
+
+
+@app.route("/admin/rooms", methods=["GET"])
+@requires_auth
+def admin_rooms():
+    return jsonify(
+        [
+            {"name": r, "users": list(room_users.get(r, {}).keys())}
+            for r in list(messages.keys())
+        ]
+    )
+
+
+@app.route("/admin/banip", methods=["POST"])
+@requires_auth
+def admin_ban_ip():
+    data = request.json
+    username = data.get("username")
+    ip_to_ban = user_ips.get(username)
+    if not ip_to_ban:
+        return jsonify({"error": "no ip"}), 400
+
+    banned_ips.add(ip_to_ban)
+    # Optionally kick user or clear data
+    user_sessions.pop(username, None)
+    for room in room_users:
+        room_users[room].pop(username, None)
+
+    return jsonify({"banned": ip_to_ban})
+
+@app.route("/admin/banusername", methods=["POST"])
+@requires_auth
+def admin_ban_username():
+    data = request.json
+    username = data.get("username")
+    if not username:
+        return jsonify({"error": "no username"}), 400
+
+    banned_usernames.add(username)
+    user_sessions.pop(username, None)
+    for room in room_users:
+        room_users[room].pop(username, None)
+
+    return jsonify({"banned": username})
+
+@app.route("/admin/banned", methods=["GET"])
+@requires_auth
+def admin_banned_list():
+    banned = [{"type": "ip", "value": ip} for ip in banned_ips]
+    banned += [{"type": "username", "value": uname} for uname in banned_usernames]
+    return jsonify(banned)
+
+@app.route("/admin")
+@requires_auth
+def admin_panel():
+    return send_from_directory("static", "admin.html")
 
 # Background cleanup thread
 def cleanup_messages():
