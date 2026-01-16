@@ -377,6 +377,17 @@ def admin_panel():
         return open("static/admin.html").read()
     except FileNotFoundError:
         return "admin.html not found", 404
+    
+@app.route("/admin/banrawip", methods=["POST"])
+@requires_auth
+def admin_ban_raw_ip():
+    data = request.json
+    ip = data.get("ip")
+    if not ip:
+        return jsonify({"error": "no ip"}), 400
+
+    banned_ips.add(ip)
+    return jsonify({"banned": ip})
 
 # Background cleanup thread
 def cleanup_messages():

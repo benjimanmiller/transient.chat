@@ -81,6 +81,51 @@ async function loadBanned() {
     });
 }
 
+async function bulkBanIPs() {
+    const lines = document.getElementById('bulkInput').value
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+    for (const ip of lines) {
+        const res = await fetch('/admin/banrawip', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip })
+        });
+
+        const result = await res.json();
+        if (!res.ok) {
+            console.warn(`Failed to ban IP: ${ip} — ${result.error}`);
+        } else {
+            console.log(`Banned IP: ${ip}`, result);
+        }
+    }
+
+    alert("Raw IP ban requests completed.");
+    loadUsers();
+    loadRooms();
+    loadBanned();
+}
+
+async function bulkBanUsernames() {
+    const lines = document.getElementById('bulkInput').value.split('\n').map(s => s.trim()).filter(Boolean);
+    for (const username of lines) {
+        const res = await fetch('/admin/banusername', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        });
+        const result = await res.json();
+        console.log(result);
+    }
+    alert("Username ban requests completed.");
+    loadUsers();
+    loadRooms();
+    loadBanned();
+}
+
+
 // Initial load
 loadUsers();
 loadRooms();
