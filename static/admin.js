@@ -134,9 +134,9 @@ loadUsers();
 loadRooms();
 loadBanned();
 
-// Refresh every 30 seconds
+// Refresh every 5 seconds
 setInterval(() => {
     loadUsers();
     loadRooms();
     loadBanned();
-}, 30000);
+}, 5000);

@@ -105,6 +105,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             })
             .catch(err => alert(err.message));
     });
+
+    document.getElementById('create-unlisted-room-btn').addEventListener('click', () => {
+        const roomName = document.getElementById('new-room-name').value.trim();
+        window.location.href = `/chat.html?room=${encodeURIComponent(roomName)}`;
+    });
 });
 
 // Enable Enter key to trigger room creation

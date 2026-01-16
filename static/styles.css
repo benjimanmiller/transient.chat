@@ -228,11 +228,15 @@ li {
   margin-top: 10px;
 }
 
-#create-room-btn {
+#create-room-btn, #create-unlisted-room-btn {
+  margin-top: 0;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
   margin-top: 10px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 /* === Links === */
