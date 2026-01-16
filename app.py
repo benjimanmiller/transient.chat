@@ -128,14 +128,18 @@ banned_usernames = set()
 
 user_ips = {}
 
+
 def check_auth(username, password):
-    return (
-        username == os.getenv("ADMIN_USERNAME") and
-        password == os.getenv("ADMIN_PASSWORD")
+    return username == os.getenv("ADMIN_USERNAME") and password == os.getenv(
+        "ADMIN_PASSWORD"
     )
 
+
 def authenticate():
-    return Response("Access Denied", 401, {"WWW-Authenticate": 'Basic realm="Login Required"'})
+    return Response(
+        "Access Denied", 401, {"WWW-Authenticate": 'Basic realm="Login Required"'}
+    )
+
 
 def requires_auth(f):
     @wraps(f)
@@ -144,7 +148,9 @@ def requires_auth(f):
         if not auth or not check_auth(auth.username, auth.password):
             return authenticate()
         return f(*args, **kwargs)
+
     return decorated
+
 
 @app.route("/")
 def index():
@@ -263,7 +269,8 @@ def chat_room(room):
         if (
             user_ip in banned_ips
             or username in banned_usernames
-            or username in user_ips and user_ips[username] in banned_ips
+            or username in user_ips
+            and user_ips[username] in banned_ips
         ):
             return jsonify({"error": "banned"}), 403
 
@@ -348,6 +355,7 @@ def admin_ban_ip():
 
     return jsonify({"banned": ip_to_ban})
 
+
 @app.route("/admin/banusername", methods=["POST"])
 @requires_auth
 def admin_ban_username():
@@ -363,12 +371,14 @@ def admin_ban_username():
 
     return jsonify({"banned": username})
 
+
 @app.route("/admin/banned", methods=["GET"])
 @requires_auth
 def admin_banned_list():
     banned = [{"type": "ip", "value": ip} for ip in banned_ips]
     banned += [{"type": "username", "value": uname} for uname in banned_usernames]
     return jsonify(banned)
+
 
 @app.route("/admin")
 @requires_auth
@@ -377,7 +387,8 @@ def admin_panel():
         return open("static/admin.html").read()
     except FileNotFoundError:
         return "admin.html not found", 404
-    
+
+
 @app.route("/admin/banrawip", methods=["POST"])
 @requires_auth
 def admin_ban_raw_ip():
@@ -388,6 +399,7 @@ def admin_ban_raw_ip():
 
     banned_ips.add(ip)
     return jsonify({"banned": ip})
+
 
 # Background cleanup thread
 def cleanup_messages():

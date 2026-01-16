@@ -2,28 +2,31 @@ async function loadUsers() {
     const res = await fetch('/admin/users');
     const users = await res.json();
     const div = document.getElementById('userList');
+    const countDisplay = document.getElementById('activeUserCount');
     div.innerHTML = '';
     users.forEach(user => {
-    const item = document.createElement('div');
-    const label = document.createElement('span');
-    label.textContent = `${user.username} (${user.ip})`;
+        const item = document.createElement('div');
+        const label = document.createElement('span');
+        label.textContent = `${user.username} (${user.ip})`;
 
-    const banIpBtn = document.createElement('button');
-    banIpBtn.textContent = 'Ban IP';
-    banIpBtn.style.marginLeft = '10px';
-    banIpBtn.onclick = () => banUser(user.username);
+        const banIpBtn = document.createElement('button');
+        banIpBtn.textContent = 'Ban IP';
+        banIpBtn.style.marginLeft = '10px';
+        banIpBtn.onclick = () => banUser(user.username);
 
-    const banUserBtn = document.createElement('button');
-    banUserBtn.textContent = 'Ban Username';
-    banUserBtn.style.marginLeft = '5px';
-    banUserBtn.onclick = () => banUsername(user.username);
+        const banUserBtn = document.createElement('button');
+        banUserBtn.textContent = 'Ban Username';
+        banUserBtn.style.marginLeft = '5px';
+        banUserBtn.onclick = () => banUsername(user.username);
 
-    item.append(label, banIpBtn, banUserBtn);
-    div.appendChild(item);
+        item.append(label, banIpBtn, banUserBtn);
+        div.appendChild(item);
 
-    const br = document.createElement('br');
-    div.appendChild(br);
+        const br = document.createElement('br');
+        div.appendChild(br);
     });
+
+    countDisplay.textContent = `(${users.length})`;
 }
 
 async function loadRooms() {

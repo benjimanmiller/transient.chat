@@ -112,13 +112,15 @@ h3 {
 
 #message-input.inputfield {
   height: 42px;
-  padding: 0 12px; /* horizontal padding only */
+  padding: 0 12px;
+  /* horizontal padding only */
   line-height: 1;
 }
 
 button {
   height: 42px;
-  padding: 0 16px; /* horizontal only */
+  padding: 0 16px;
+  /* horizontal only */
   font-weight: bold;
   font-size: 14px;
   background-color: #39a0ff;
