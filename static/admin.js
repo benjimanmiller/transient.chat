@@ -35,13 +35,15 @@ async function loadRooms() {
     const div = document.getElementById('roomList');
     const countDisplay = document.getElementById('activeRoomCount');
 
-    const roomLines = rooms.map(r => {
+    const activeRooms = rooms.filter(r => r.users.length > 0); // Filter active only
+
+    const roomLines = activeRooms.map(r => {
         const users = r.users.join(', ');
         return `<div><a href="/chat.html?room=${encodeURIComponent(r.name)}" target="_blank">${r.name}</a>: ${users}</div><br />`;
     });
 
     div.innerHTML = roomLines.join('');
-    countDisplay.textContent = `(${rooms.length})`;
+    countDisplay.textContent = `(${activeRooms.length})`;
 }
 
 async function banUser(username) {
