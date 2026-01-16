@@ -107,6 +107,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 });
 
+// Enable Enter key to trigger room creation
+document.getElementById('new-room-name').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        document.getElementById('create-room-btn').click();
+    }
+});
+
 // Force reload if coming back via bfcache (e.g., Back button)
 window.addEventListener('pageshow', (event) => {
     if (event.persisted) {
