@@ -373,7 +373,10 @@ def admin_banned_list():
 @app.route("/admin")
 @requires_auth
 def admin_panel():
-    return send_from_directory("static", "admin.html")
+    try:
+        return open("static/admin.html").read()
+    except FileNotFoundError:
+        return "admin.html not found", 404
 
 # Background cleanup thread
 def cleanup_messages():
