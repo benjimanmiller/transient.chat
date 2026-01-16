@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const room = params.get("room");
     const username = localStorage.getItem("username");
     const userKey = localStorage.getItem("userKey");
+    let firstLoad = true;
 
     if (!room || !username || !userKey) {
         alert("Missing room or user credentials.");
@@ -17,7 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    // Validate credentials
     try {
         const res = await fetch('/validate', {
             method: 'POST',
@@ -45,6 +45,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("chat-form");
     const input = document.getElementById("message-input");
     const usersDiv = document.getElementById("user-list");
+    const soundToggleBtn = document.getElementById("sound-toggle");
+
+    // Audio setup
+    const sounds = {
+        message: new Audio('message.wav'),
+        in: new Audio('user-in.wav'),
+        out: new Audio('user-out.wav'),
+    };
+
+    let soundEnabled = true;
+    soundToggleBtn.addEventListener("click", () => {
+        soundEnabled = !soundEnabled;
+        soundToggleBtn.textContent = soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off";
+        soundToggleBtn.style.backgroundColor = soundEnabled ? "" : "gray";
+    });
 
     async function refreshUserPresence() {
         await fetch(`/chat/${encodeURIComponent(room)}/users`, {
@@ -54,10 +69,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    let lastUserList = [];
+
     async function loadUsers() {
         const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
         const userList = await res.json();
         usersDiv.innerHTML = "";
+
+        const joined = userList.filter(user => !lastUserList.includes(user));
+        const left = lastUserList.filter(user => !userList.includes(user));
+
+        if (!firstLoad && soundEnabled) {
+            if (joined.length > 0) sounds.in.play();
+            if (left.length > 0) sounds.out.play();
+        }
+
+        lastUserList = userList;
+
         userList.forEach(user => {
             const div = document.createElement("div");
             div.textContent = user;
@@ -102,42 +130,45 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    function loadMessages() {
+    async function loadMessages() {
         const url = `/chat/${encodeURIComponent(room)}` + (lastTimestamp ? `?since=${encodeURIComponent(lastTimestamp)}` : "");
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                if (!Array.isArray(data)) return;
+        const res = await fetch(url);
+        const data = await res.json();
 
-                const now = Date.now();
-                const oneHourAgo = now - 60 * 60 * 1000;
+        if (!Array.isArray(data)) return;
 
-                const newMessages = data.filter(msg => {
-                    const msgTime = new Date(msg.timestamp).getTime();
-                    return msgTime >= oneHourAgo;
-                });
+        const now = Date.now();
+        const oneHourAgo = now - 60 * 60 * 1000;
 
-                newMessages.forEach(msg => {
-                    const div = document.createElement("div");
-                    div.classList.add("message");
-                    div.setAttribute("data-timestamp", msg.timestamp);
-                    if (msg.username === username) {
-                        div.classList.add("my-message");
-                    }
-                    div.innerHTML = `<strong>${msg.username}:</strong> ${linkify(msg.text)}`;
-                    messagesDiv.appendChild(div);
-                });
+        const newMessages = data.filter(msg => {
+            const msgTime = new Date(msg.timestamp).getTime();
+            return msgTime >= oneHourAgo;
+        });
 
-                if (newMessages.length > 0) {
-                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                    lastTimestamp = newMessages[newMessages.length - 1].timestamp;
-                }
+        newMessages.forEach(msg => {
+            const div = document.createElement("div");
+            div.classList.add("message");
+            div.setAttribute("data-timestamp", msg.timestamp);
+            if (msg.username === username) {
+                div.classList.add("my-message");
+            }
+            div.innerHTML = `<strong>${msg.username}:</strong> ${linkify(msg.text)}`;
+            messagesDiv.appendChild(div);
+        });
 
-                if (!windowFocused && newMessages.length > 0) {
-                    unreadCount += newMessages.length;
-                    document.title = `${room} (${unreadCount})`;
-                }
-            });
+        if (newMessages.length > 0) {
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            lastTimestamp = newMessages[newMessages.length - 1].timestamp;
+        }
+
+        if (!firstLoad && soundEnabled && newMessages.some(msg => msg.username !== username)) {
+            sounds.message.play();
+        }
+
+        if (!windowFocused && newMessages.length > 0) {
+            unreadCount += newMessages.length;
+            document.title = `${room} (${unreadCount})`;
+        }
     }
 
     form.addEventListener("submit", e => {
@@ -156,11 +187,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function refresh() {
         await refreshUserPresence();
-        loadMessages();
-        loadUsers();
+        await loadMessages();
+        await loadUsers();
         cleanExpiredMessages();
+        firstLoad = false; // Only flip after full refresh cycle
     }
 
     await refresh();
-    setInterval(refresh, 1000); // Poll every second
+    setInterval(refresh, 1000);
 });
