@@ -142,6 +142,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const newMessages = data.filter(msg => {
             const msgTime = new Date(msg.timestamp).getTime();
+            if (isNaN(msgTime)) return false;
+            if (firstLoad) return true; // On first load, show messages regardless of timestamp
             return msgTime >= oneHourAgo;
         });
 
@@ -182,6 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             body: JSON.stringify({ username, text })
         }).then(() => {
             input.value = "";
+            refresh(); // Force a refresh to fetch the new message from server
         });
     });
 
