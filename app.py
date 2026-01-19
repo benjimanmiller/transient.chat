@@ -283,21 +283,23 @@ def chat_room(room):
         if len(messages[room]) > 100:
             messages[room] = messages[room][-100:]
 
+    # ✅ Ensure room exists in `messages` before accessing
+    room_messages = messages.setdefault(room, [])
+
     since = request.args.get("since")
     if since:
         try:
             since_time = datetime.fromisoformat(since)
             new_msgs = [
                 m
-                for m in messages[room]
+                for m in room_messages
                 if datetime.fromisoformat(m["timestamp"]) > since_time
             ]
             return jsonify(new_msgs)
         except ValueError:
-            pass  # Invalid timestamp format; fall back to returning all
+            pass  # Invalid timestamp format
 
-    return jsonify(messages[room])
-
+    return jsonify(room_messages)
 
 @app.route("/chat/<room>/users", methods=["POST", "GET"])
 def room_user_list(room):
