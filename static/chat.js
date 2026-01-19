@@ -88,7 +88,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     function linkify(text) {
-        return text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+        return text.replace(/(https?:\/\/[^\s]+)/g, (url) => {
+            const imagePattern = /\.(png|jpe?g|gif)$/i;
+            if (imagePattern.test(url)) {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer">
+                            <img src="${url}" alt="image" style="max-width: 100%; height: auto; border-radius: 4px;">
+                        </a>`;
+            }
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+        });
     }
 
     function cleanExpiredMessages() {
