@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const input = document.getElementById("message-input");
     const usersDiv = document.getElementById("user-list");
     const soundToggleBtn = document.getElementById("sound-toggle");
+    const externalToggleBtn = document.getElementById("external-toggle");
 
     // Audio setup
     const sounds = {
@@ -60,6 +61,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         soundEnabled = !soundEnabled;
         soundToggleBtn.textContent = soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off";
         soundToggleBtn.style.backgroundColor = soundEnabled ? "" : "gray";
+    });
+
+    let externalContentEnabled = false;
+
+    const updateExternalToggleBtn = () => {
+        externalToggleBtn.textContent = externalContentEnabled
+            ? "🖼️ Display External Content: On"
+            : "🖼️ Display External Content: Off";
+        externalToggleBtn.style.backgroundColor = externalContentEnabled ? "" : "gray";
+    };
+
+    updateExternalToggleBtn(); // Set initial text + style
+
+    externalToggleBtn.addEventListener("click", () => {
+        externalContentEnabled = !externalContentEnabled;
+        updateExternalToggleBtn();
     });
 
     async function refreshUserPresence() {
@@ -90,11 +107,85 @@ document.addEventListener("DOMContentLoaded", async () => {
     function linkify(text) {
         return text.replace(/(https?:\/\/[^\s]+)/g, (url) => {
             const imagePattern = /\.(png|jpe?g|gif)$/i;
-            if (imagePattern.test(url)) {
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer">
-                            <img src="${url}" alt="image" style="max-width: 100%; height: auto; border-radius: 4px;">
-                        </a>`;
+            const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/;
+
+            const id = `preview-${Math.random().toString(36).substr(2, 9)}`;
+
+            // ✅ YouTube Video
+            const ytMatch = url.match(youtubeRegex);
+            if (ytMatch) {
+                const videoId = ytMatch[1];
+                const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+
+                if (externalContentEnabled) {
+                    return `
+                    <div style="padding: 0.5em; text-align: center;">
+                        <iframe 
+                            src="${embedUrl}" 
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen
+                            style="width: 640px; height: 360px; max-width: 100%; border-radius: 4px;"
+                        ></iframe>
+                    </div>
+                `;
+                } else {
+                    return `
+                    <div class="external-image-placeholder" style="padding: 0.5em; text-align: center;">
+                        <button onclick="
+                            this.style.display='none';
+                            const iframe = document.createElement('iframe');
+                            iframe.src = '${embedUrl}';
+                            iframe.title = 'YouTube video player';
+                            iframe.frameBorder = 0;
+                            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                            iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+                            iframe.allowFullscreen = true;
+                            iframe.style.width = '640px';
+                            iframe.style.height = '360px';
+                            iframe.style.maxWidth = '100%';
+                            iframe.style.borderRadius = '4px';
+                            document.getElementById('${id}').appendChild(iframe);
+                        ">
+                            Show external content
+                        </button>
+                        <div id="${id}" style="margin-top: 0.5em;"></div>
+                    </div>
+                `;
+                }
             }
+
+            // ✅ Image
+            if (imagePattern.test(url)) {
+                if (externalContentEnabled) {
+                    return `
+                    <div style="padding: 0.5em; text-align: center;">
+                        <img src="${url}" style="width: 100%; height: auto; border-radius: 4px;" />
+                    </div>
+                `;
+                } else {
+                    return `
+                    <div class="external-image-placeholder" style="padding: 0.5em; text-align: center;">
+                        <button onclick="
+                            this.style.display='none';
+                            const img = document.createElement('img');
+                            img.src = '${url}';
+                            img.style.width = '100%';
+                            img.style.height = 'auto';
+                            img.style.borderRadius = '4px';
+                            document.getElementById('${id}').appendChild(img);
+                        ">
+                            Show external content
+                        </button>
+                        <div id="${id}" style="margin-top: 0.5em;"></div>
+                    </div>
+                `;
+                }
+            }
+
+            // 🔗 Default fallback: plain link
             return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
         });
     }
