@@ -67,8 +67,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const updateExternalToggleBtn = () => {
         externalToggleBtn.textContent = externalContentEnabled
-            ? "🖼️ Display External Content: On"
-            : "🖼️ Display External Content: Off";
+            ? "🖼️ External Content: On"
+            : "🖼️ External Content: Off";
         externalToggleBtn.style.backgroundColor = externalContentEnabled ? "" : "gray";
     };
 
