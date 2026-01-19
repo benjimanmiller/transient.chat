@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 if (externalContentEnabled) {
                     return `
+                    <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>
                     <div style="padding: 0.5em; text-align: center;">
                         <iframe 
                             src="${embedUrl}" 
@@ -133,6 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 `;
                 } else {
                     return `
+                    <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>
                     <div class="external-image-placeholder" style="padding: 0.5em; text-align: center;">
                         <button onclick="
                             this.style.display='none';
@@ -161,12 +163,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (imagePattern.test(url)) {
                 if (externalContentEnabled) {
                     return `
+                    <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>
                     <div style="padding: 0.5em; text-align: center;">
                         <img src="${url}" style="width: 100%; height: auto; border-radius: 4px;" />
                     </div>
                 `;
                 } else {
                     return `
+                    <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>
                     <div class="external-image-placeholder" style="padding: 0.5em; text-align: center;">
                         <button onclick="
                             this.style.display='none';
