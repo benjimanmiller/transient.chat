@@ -4,6 +4,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const params = new URLSearchParams(window.location.search);
     const room = params.get('room');
+    const isWatchParty = params.has('watchparty'); // Use explicit watchparty URL flag
+
+    function redirectToRoom(roomName) {
+        if (!roomName) {
+            window.location.href = '/server_list.html';
+        } else {
+            window.location.href = isWatchParty
+                ? `/watchparty_chat.html?room=${encodeURIComponent(roomName)}`
+                : `/chat.html?room=${encodeURIComponent(roomName)}`;
+        }
+    }
 
     // Auto-forward if valid session is stored
     if (storedUsername && storedKey) {
@@ -15,9 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             if (response.ok) {
-                window.location.href = room
-                    ? `/chat.html?room=${encodeURIComponent(room)}`
-                    : '/server_list.html';
+                redirectToRoom(room);
                 return;
             }
         } catch (err) {
@@ -25,7 +34,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // If not validated, set up login as normal
     const startButton = document.getElementById('start-chat-button');
     const usernameInput = document.getElementById('username-input');
 
@@ -64,9 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 localStorage.setItem('username', data.username);
                 localStorage.setItem('userKey', data.key);
 
-                window.location.href = room
-                    ? `/chat.html?room=${encodeURIComponent(room)}`
-                    : '/server_list.html';
+                redirectToRoom(room);
             } catch (error) {
                 console.error('Registration error:', error);
                 alert('An error occurred.');

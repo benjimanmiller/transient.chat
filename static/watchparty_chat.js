@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!room || !username || !userKey) {
         alert("Missing room or user credentials.");
-        window.location.href = `/index.html${room ? `?room=${encodeURIComponent(room)}` : ""}`;
+        window.location.href = `/index.html${room ? `?room=${encodeURIComponent(room)}&watchparty=1` : ""}`;
         return;
     }
 
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
         localStorage.clear();
         alert("Validation failed.");
-        window.location.href = "/";
+        window.location.href = `/index.html${room ? `?room=${encodeURIComponent(room)}&watchparty=1` : ""}`;
         return;
     }
 
