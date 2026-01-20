@@ -356,3 +356,9 @@ li a {
     margin-top: 10px;
   }
 }
+
+@media (max-width: 750px) {
+  #user-list-container {
+    display: none;
+  }
+}
