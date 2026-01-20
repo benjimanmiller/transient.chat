@@ -240,7 +240,7 @@ def get_or_create_rooms():
             {
                 "name": room,
                 "users": len(room_users.get(room, {})),
-                "type": "watchparty" if room in video_state else "chat"
+                "type": "watchparty" if room in video_state else "chat",
             }
             for room in room_list
         ]
@@ -249,12 +249,14 @@ def get_or_create_rooms():
     for users in room_users.values():
         all_users.update(users.keys())
 
-    return jsonify({
-        "regional": build_room_data(regional_chat_rooms),
-        "topical": build_room_data(topical_chat_rooms),
-        "public": build_room_data(public_chat_rooms),
-        "unique_users": len(all_users)
-    })
+    return jsonify(
+        {
+            "regional": build_room_data(regional_chat_rooms),
+            "topical": build_room_data(topical_chat_rooms),
+            "public": build_room_data(public_chat_rooms),
+            "unique_users": len(all_users),
+        }
+    )
 
 
 @app.route("/chat/<room>", methods=["GET", "POST"])
@@ -302,6 +304,10 @@ def chat_room(room):
 
     return jsonify(room_messages)
 
+
+room_owners = {}  # Tracks room owner username
+
+
 @app.route("/chat/<room>/users", methods=["POST", "GET"])
 def room_user_list(room):
     room = room.strip()
@@ -310,9 +316,18 @@ def room_user_list(room):
         username = data.get("username")
         if not username:
             return jsonify({"error": "No username"}), 400
-        room_users.setdefault(room, {})[username] = datetime.utcnow().isoformat()
+
+        room_users.setdefault(room, {})
+        if room not in room_owners and username not in room_users[room]:
+            room_owners[room] = username  # First user becomes the owner
+
+        room_users[room][username] = datetime.utcnow().isoformat()
+
     users = room_users.get(room, {})
-    return jsonify(list(users.keys()))
+    response = {"users": list(users.keys())}
+    if room in room_owners:
+        response["owner"] = room_owners[room]
+    return jsonify(response)
 
 
 @app.route("/admin/users", methods=["GET"])
@@ -403,6 +418,7 @@ def admin_ban_raw_ip():
     banned_ips.add(ip)
     return jsonify({"banned": ip})
 
+
 @app.route("/admin/releaseuser", methods=["POST"])
 @requires_auth
 def admin_release_user():
@@ -417,9 +433,9 @@ def admin_release_user():
         room_users[room].pop(username, None)
     return jsonify({"released": username})
 
+
 video_state = {}  # 🧠 Tracks YouTube video and start time for each watchparty room
 
-# ... existing code ...
 
 @app.route("/watchparty/<room>/video", methods=["GET", "POST"])
 def watchparty_video_control(room):
@@ -438,10 +454,7 @@ def watchparty_video_control(room):
         if not url:
             return jsonify({"error": "No video URL"}), 400
 
-        video_state[room] = {
-            "url": url,
-            "started_at": datetime.utcnow().isoformat()
-        }
+        video_state[room] = {"url": url, "started_at": datetime.utcnow().isoformat()}
         return jsonify({"status": "started"})
 
     # GET: Return video and current playback position
@@ -452,12 +465,10 @@ def watchparty_video_control(room):
     try:
         start_time = datetime.fromisoformat(video_data["started_at"])
         elapsed = (datetime.utcnow() - start_time).total_seconds()
-        return jsonify({
-            "url": video_data["url"],
-            "elapsed": int(elapsed)
-        })
+        return jsonify({"url": video_data["url"], "elapsed": int(elapsed)})
     except ValueError:
         return jsonify({"error": "Invalid timestamp"}), 500
+
 
 # Background cleanup thread
 def cleanup_messages():
