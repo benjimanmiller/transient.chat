@@ -129,7 +129,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Video finished
             iframe.src = "";
             iframe.style.display = "none";
-            videoControls.style.display = "block";
+
+            // Only show controls if the current user is the owner
+            try {
+                const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
+                const data = await res.json();
+                if (data.owner && data.owner === username) {
+                    videoControls.style.display = "block";
+                } else {
+                    videoControls.style.display = "none";
+                }
+            } catch (err) {
+                console.error("Failed to re-check ownership after video end", err);
+                videoControls.style.display = "none";
+            }
+
             videoStarted = false;
             videoExpireAt = null;
             lastVideoId = null;

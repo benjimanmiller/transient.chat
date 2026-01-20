@@ -216,20 +216,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function loadUsers() {
         const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
-        const userList = await res.json();
+        const data = await res.json();
+
+        const currentList = data.users || []; // Extract the array correctly now
         usersDiv.innerHTML = "";
 
-        const joined = userList.filter(user => !lastUserList.includes(user));
-        const left = lastUserList.filter(user => !userList.includes(user));
+        const joined = currentList.filter(user => !lastUserList.includes(user));
+        const left = lastUserList.filter(user => !currentList.includes(user));
 
         if (!firstLoad && soundEnabled) {
             if (joined.length > 0) sounds.in.play();
             if (left.length > 0) sounds.out.play();
         }
 
-        lastUserList = userList;
+        lastUserList = currentList;
 
-        userList.forEach(user => {
+        currentList.forEach(user => {
             const div = document.createElement("div");
             div.textContent = user;
             usersDiv.appendChild(div);
