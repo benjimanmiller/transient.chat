@@ -419,6 +419,8 @@ def admin_release_user():
 
 video_state = {}  # 🧠 Tracks YouTube video and start time for each watchparty room
 
+# ... existing code ...
+
 @app.route("/watchparty/<room>/video", methods=["GET", "POST"])
 def watchparty_video_control(room):
     room = room.strip()
@@ -426,6 +428,9 @@ def watchparty_video_control(room):
     # ✅ Ensure it's tracked as a public room
     if room not in public_chat_rooms:
         public_chat_rooms.append(room)
+
+    # ✅ Mark it as a watchparty even if no video yet
+    video_state.setdefault(room, {})
 
     if request.method == "POST":
         data = request.json
@@ -441,7 +446,7 @@ def watchparty_video_control(room):
 
     # GET: Return video and current playback position
     video_data = video_state.get(room)
-    if not video_data:
+    if not video_data or "url" not in video_data:
         return jsonify({"error": "No video"})
 
     try:

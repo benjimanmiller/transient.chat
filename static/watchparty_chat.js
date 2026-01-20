@@ -97,9 +97,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Monitor if video ended
-  setInterval(() => {
-    if (videoStarted && videoExpireAt && Date.now() > videoExpireAt) {
+  // Continuous sync loop to detect active video if started after join
+  setInterval(async () => {
+    // Check if a video is currently playing
+    if (!videoStarted) {
+      await syncVideoFromServer();
+    } else if (videoExpireAt && Date.now() > videoExpireAt) {
+      // Video finished
       iframe.src = "";
       iframe.style.display = "none";
       videoControls.style.display = "block";
@@ -109,6 +113,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }, 1000);
 
-  // Attempt to sync video on entry
+  // Initial sync on page load
   await syncVideoFromServer();
 });
