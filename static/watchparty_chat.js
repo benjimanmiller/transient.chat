@@ -43,13 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function fetchYouTubeDuration(videoId) {
-        try {
-            const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
-            const data = await res.json();
-            return data.duration || 300;
-        } catch {
-            return 300;
-        }
+        return 24 * 60 * 60; // 24 hours in seconds
     }
 
     function loadYouTubeVideo(videoId, startSeconds = 0) {
