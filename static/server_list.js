@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const username = localStorage.getItem('username');
     const userKey = localStorage.getItem('userKey');
 
-    // Validate credentials before proceeding
     if (!username || !userKey) {
         window.location.href = '/';
         return;
@@ -40,41 +39,53 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     fetch("/rooms")
         .then(response => response.json())
-        .then(async data => {
+        .then(data => {
             const { regional, topical, public: publicRooms, unique_users } = data;
 
             const regionalList = document.getElementById('regional-rooms');
             const topicalList = document.getElementById('topical-rooms');
             const publicList = document.getElementById('public-rooms');
+            const watchpartyList = document.getElementById('watchparty-rooms');
 
-            const createRoomItem = (roomObj) => {
-                const { name, users: userCount } = roomObj;
+            // Helper to create a room <li>
+            function createRoomItem({ name, users, type }) {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
-                a.href = `/chat.html?room=${encodeURIComponent(name)}`;
-                a.textContent = `${name}  ( ${userCount} )`;
+                const isWatchParty = type === 'watchparty';
+                a.href = isWatchParty
+                    ? `/watchparty_chat.html?room=${encodeURIComponent(name)}`
+                    : `/chat.html?room=${encodeURIComponent(name)}`;
+                a.textContent = `${name}  ( ${users} )`;
                 li.appendChild(a);
-                return li;
-            };
-
-            // Populate rooms
-            for (const room of regional) {
-                const li = createRoomItem(room);
-                regionalList.appendChild(li);
+                return { li, isWatchParty };
             }
 
-            for (const room of topical) {
-                const li = createRoomItem(room);
-                topicalList.appendChild(li);
-            }
+            // Add regional rooms
+            regional.forEach(room => {
+                regionalList.appendChild(createRoomItem(room).li);
+            });
 
-            for (const room of publicRooms) {
-                const li = createRoomItem(room);
-                publicList.appendChild(li);
-            }
+            // Add topical rooms
+            topical.forEach(room => {
+                topicalList.appendChild(createRoomItem(room).li);
+            });
 
-            // Set unique user count
+            // Add public/watchparty rooms
+            publicRooms.forEach(room => {
+                const { li, isWatchParty } = createRoomItem(room);
+                if (isWatchParty) {
+                    watchpartyList.appendChild(li);
+                } else {
+                    publicList.appendChild(li);
+                }
+            });
+
+            // Show total unique user count
             document.getElementById('user-count').textContent = `Users Chatting ( ${unique_users} )`;
+        })
+        .catch(err => {
+            console.error("Failed to load rooms:", err);
+            alert("Failed to load rooms.");
         });
 
     document.getElementById('create-room-btn').addEventListener('click', () => {
@@ -91,16 +102,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return response.json();
             })
             .then(data => {
-                const publicList = document.getElementById('public-rooms');
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = `/chat.html?room=${encodeURIComponent(data.name)}`;
-                a.textContent = data.name;
-                li.appendChild(a);
-                publicList.appendChild(li);
-                document.getElementById('new-room-name').value = '';
-
-                // Automatically redirect to new room
                 window.location.href = `/chat.html?room=${encodeURIComponent(data.name)}`;
             })
             .catch(err => alert(err.message));
@@ -110,16 +111,42 @@ document.addEventListener("DOMContentLoaded", async () => {
         const roomName = document.getElementById('new-room-name').value.trim();
         window.location.href = `/chat.html?room=${encodeURIComponent(roomName)}`;
     });
+
+    // 🔥 Watch Party creation
+    document.getElementById('create-watchparty-btn').addEventListener('click', () => {
+        const roomName = document.getElementById('new-watchparty-name').value.trim();
+        if (!roomName) return alert('Room name cannot be empty.');
+
+        fetch('/rooms', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: roomName })
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Watch party creation failed.');
+                return response.json();
+            })
+            .then(data => {
+                window.location.href = `/watchparty_chat.html?room=${encodeURIComponent(data.name)}`;
+            })
+            .catch(err => alert(err.message));
+    });
 });
 
-// Enable Enter key to trigger room creation
+// Enable Enter key for room creation
 document.getElementById('new-room-name').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
         document.getElementById('create-room-btn').click();
     }
 });
 
-// Force reload if coming back via bfcache (e.g., Back button)
+// Enable Enter key for watch party creation
+document.getElementById('new-watchparty-name').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        document.getElementById('create-watchparty-btn').click();
+    }
+});
+
 window.addEventListener('pageshow', (event) => {
     if (event.persisted) {
         window.location.reload();

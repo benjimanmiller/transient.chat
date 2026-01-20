@@ -235,25 +235,26 @@ def get_or_create_rooms():
         public_chat_rooms.append(room_name)
         return jsonify({"name": room_name})
 
-    # Count users per room
     def build_room_data(room_list):
         return [
-            {"name": room, "users": len(room_users.get(room, {}))} for room in room_list
+            {
+                "name": room,
+                "users": len(room_users.get(room, {})),
+                "type": "watchparty" if room in video_state else "chat"
+            }
+            for room in room_list
         ]
 
-    # Collect all unique usernames
     all_users = set()
     for users in room_users.values():
         all_users.update(users.keys())
 
-    return jsonify(
-        {
-            "regional": build_room_data(regional_chat_rooms),
-            "topical": build_room_data(topical_chat_rooms),
-            "public": build_room_data(public_chat_rooms),
-            "unique_users": len(all_users),
-        }
-    )
+    return jsonify({
+        "regional": build_room_data(regional_chat_rooms),
+        "topical": build_room_data(topical_chat_rooms),
+        "public": build_room_data(public_chat_rooms),
+        "unique_users": len(all_users)
+    })
 
 
 @app.route("/chat/<room>", methods=["GET", "POST"])
@@ -416,6 +417,42 @@ def admin_release_user():
         room_users[room].pop(username, None)
     return jsonify({"released": username})
 
+video_state = {}  # 🧠 Tracks YouTube video and start time for each watchparty room
+
+@app.route("/watchparty/<room>/video", methods=["GET", "POST"])
+def watchparty_video_control(room):
+    room = room.strip()
+
+    # ✅ Ensure it's tracked as a public room
+    if room not in public_chat_rooms:
+        public_chat_rooms.append(room)
+
+    if request.method == "POST":
+        data = request.json
+        url = data.get("url")
+        if not url:
+            return jsonify({"error": "No video URL"}), 400
+
+        video_state[room] = {
+            "url": url,
+            "started_at": datetime.utcnow().isoformat()
+        }
+        return jsonify({"status": "started"})
+
+    # GET: Return video and current playback position
+    video_data = video_state.get(room)
+    if not video_data:
+        return jsonify({"error": "No video"})
+
+    try:
+        start_time = datetime.fromisoformat(video_data["started_at"])
+        elapsed = (datetime.utcnow() - start_time).total_seconds()
+        return jsonify({
+            "url": video_data["url"],
+            "elapsed": int(elapsed)
+        })
+    except ValueError:
+        return jsonify({"error": "Invalid timestamp"}), 500
 
 # Background cleanup thread
 def cleanup_messages():

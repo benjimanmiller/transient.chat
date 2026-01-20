@@ -255,7 +255,9 @@ a:visited {
 
 #username-input,
 #new-room-name,
-#message-input {
+#message-input, 
+#new-watchparty-name,
+#video-url-input {
   background-color: #ffffff;
   color: #444;
 }

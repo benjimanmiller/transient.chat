@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transient.chat - Watch Party</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1 id="room-title">Watch Party Room</h1>
+
+    <!-- Watch Party Controls -->
+    <div id="video-controls" style="margin-bottom: 15px; max-width: 800px; width: 100%;">
+    <input type="text" id="video-url-input" placeholder="Paste YouTube video URL..." />
+    <button id="start-video-button">▶️ Play</button>
+    </div>
+    
+    <!-- Watch Party Video -->
+    <div style="margin-bottom: 20px; max-width: 800px; width: 100%;">
+      <iframe
+        id="video-iframe"
+        width="100%"
+        height="420"
+        frameborder="0"
+        allowfullscreen
+        allow="autoplay; encrypted-media"
+        style="display: none; border-radius: 8px;"
+      ></iframe>
+    </div>
+
+    <!-- Chat Layout -->
+    <div id="page-container">
+      <div id="chat-center">
+        <div id="messages"></div>
+        <form id="chat-form">
+          <input
+            type="text"
+            class="inputfield"
+            id="message-input"
+            placeholder="Type a message, paste in a link, or url to an image or YouTube video."
+            autocomplete="off"
+            required
+          />
+          <button type="submit">Send</button>
+        </form>
+      </div>
+
+      <div id="user-list-container">
+        <a
+          href="server_list.html"
+          style="
+            display: inline-block;
+            margin-bottom: 10px;
+            text-decoration: none;
+          "
+        >
+          <button>Server List</button>
+        </a>
+        <br />
+        <button
+          id="sound-toggle"
+          style="
+            margin-bottom: 10px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: left;
+          "
+        >
+          🔊 Sound: On
+        </button>
+        <br />
+        <button
+          id="external-toggle"
+          style="
+            margin-bottom: 10px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: left;
+          "
+        >
+          🔒 External Content: Off
+        </button>
+        <br /><br />
+        <h3>Users in room</h3>
+        <div id="user-list"></div>
+      </div>
+    </div>
+
+    <script src="watchparty_chat.js"></script>
+  </body>
+</html>
