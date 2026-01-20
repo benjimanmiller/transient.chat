@@ -490,6 +490,7 @@ def cleanup_messages():
                 public_chat_rooms.remove(room)
                 messages.pop(room, None)
                 room_users.pop(room, None)
+                video_state.pop(room, None)
 
         # Remove inactive user sessions
         user_cutoff = datetime.utcnow() - timedelta(days=3)
