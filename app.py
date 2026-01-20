@@ -469,6 +469,11 @@ def watchparty_video_control(room):
     except ValueError:
         return jsonify({"error": "Invalid timestamp"}), 500
 
+@app.route("/watchparty/<room>/video/clear", methods=["POST"])
+def clear_watchparty_video(room):
+    room = room.strip()
+    video_state.pop(room, None)
+    return jsonify({"status": "cleared"})
 
 # Background cleanup thread
 def cleanup_messages():
