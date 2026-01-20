@@ -70,7 +70,7 @@ h3 {
   flex-direction: column;
   flex-grow: 1;
   height: auto;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 205px);
 }
 
 #messages .message {
@@ -281,7 +281,7 @@ li a {
 
 #video-section {
   flex: 2;
-  max-width: 120000px;
+  max-width: 1200px;
 }
 
 #chat-center {
@@ -301,11 +301,76 @@ li a {
   flex-wrap: wrap;
 }
 
-
+#video-iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 1080px; /* limit max video height if you want */
+  border-radius: 8px;
+  display: block;
+  height: auto; 
+}
 
 @media (max-width: 950px) {
+  /* Make video and chat stack vertically */
   #video-chat-container {
     flex-direction: column;
+  }
+
+  /* Force fixed height for video on small screens */
+  #video-iframe {
+    aspect-ratio: auto;         /* Disable aspect ratio for small screens */
+    height: 420px;              /* Fixed height */
+    max-height: none;           /* Remove any previous cap */
+  }
+
+  #video-section,
+  #chat-center {
+    max-width: 100%;
+  }
+
+  /* Hide user list to save space */
+  #user-list-container {
+    display: none;
+  }
+
+  /* Hide room title on small screens */
+  #room-title {
+    display: none;
+  }
+
+  /* tighter page layout */
+  body {
+    padding: 10px;
+    height: auto;
+  }
+
+  /* Full-height chat layout under video */
+  #chat-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Limit chat message height so it doesn't overflow */
+  #messages {
+    max-height: calc(100vh - 500px);  /* Adjust this value based on video + chat input */
+    min-height: 150px;
+    overflow-y: auto;
+  }
+
+  /* Keep the input box anchored just below messages */
+  #chat-form {
+    margin-top: 10px;
+  }
+}@media (max-width: 950px) {
+  #video-chat-container {
+    flex-direction: column;
+  }
+
+  #video-iframe {
+    aspect-ratio: auto; /* disable aspect-ratio */
+    height: 420px;
   }
 
   #video-section,
