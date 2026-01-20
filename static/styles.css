@@ -228,7 +228,8 @@ li {
   margin-top: 10px;
 }
 
-#create-room-btn, #create-unlisted-room-btn {
+#create-room-btn,
+#create-unlisted-room-btn {
   margin-top: 0;
 }
 
@@ -255,7 +256,7 @@ a:visited {
 
 #username-input,
 #new-room-name,
-#message-input, 
+#message-input,
 #new-watchparty-name,
 #video-url-input {
   background-color: #ffffff;
@@ -269,13 +270,78 @@ li a {
   text-decoration: underline;
 }
 
-@media (max-width: 750px) {
+#video-chat-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+  max-width: 2400px;
+  margin-top: 20px;
+}
+
+#video-section {
+  flex: 2;
+  max-width: 120000px;
+}
+
+#chat-center {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+}
+
+/* Ensure video controls look clean */
+#video-controls {
+  margin-bottom: 15px;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+
+
+@media (max-width: 950px) {
+  #video-chat-container {
+    flex-direction: column;
+  }
+
+  #video-section,
+  #chat-center {
+    max-width: 100%;
+  }
+
   #user-list-container {
     display: none;
   }
 
+  /* 👉 Hide room title */
+  #room-title {
+    display: none;
+  }
+
+  /* 👉 Adjust layout to avoid overflow, enable scroll */
+  body {
+    padding: 10px;
+    height: auto;
+  }
+
   #chat-center {
     flex: 1;
-    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #messages {
+    max-height: calc(100vh - 550px); /* smaller visual height on mobile */
+    min-height: 150px;
+    overflow-y: auto;
+  }
+
+  #chat-form {
+    margin-top: 10px;
   }
 }

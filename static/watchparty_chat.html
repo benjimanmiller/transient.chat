@@ -9,37 +9,33 @@
   <body>
     <h1 id="room-title">Watch Party Room</h1>
 
-    <!-- Watch Party Controls -->
-    <div
-    id="video-controls"
-    style="margin-bottom: 15px; max-width: 800px; width: 100%"
-    >
-    <input
-        type="text"
-        id="video-url-input"
-        placeholder="Paste YouTube video URL..."
-    />
-    <button id="start-video-button">▶️ Play</button>
-    <button id="clear-video-button" style="display: none">
-        🛑 Clear Video
-    </button>
-    </div>
+    <div id="video-chat-container">
+      <!-- Column 1: Video Section -->
+      <div id="video-section">
+        <div id="video-controls">
+          <input
+            type="text"
+            id="video-url-input"
+            placeholder="Paste YouTube video URL..."
+          />
+          <button id="start-video-button">▶️ Play</button>
+          <button id="clear-video-button" style="display: none">🛑 Clear Video</button>
+        </div>
 
-    <!-- Watch Party Video -->
-    <div style="margin-bottom: 20px; max-width: 800px; width: 100%">
-      <iframe
-        id="video-iframe"
-        width="100%"
-        height="420"
-        frameborder="0"
-        allowfullscreen
-        allow="autoplay; encrypted-media"
-        style="display: none; border-radius: 8px"
-      ></iframe>
-    </div>
+        <div style="margin-bottom: 20px; width: 100%;">
+          <iframe
+            id="video-iframe"
+            width="100%"
+            height="420"
+            frameborder="0"
+            allowfullscreen
+            allow="autoplay; encrypted-media"
+            style="display: none; border-radius: 8px"
+          ></iframe>
+        </div>
+      </div>
 
-    <!-- Chat Layout -->
-    <div id="page-container">
+      <!-- Column 2: Chat Section -->
       <div id="chat-center">
         <div id="messages"></div>
         <form id="chat-form">
@@ -55,6 +51,7 @@
         </form>
       </div>
 
+      <!-- Column 3: User List + Controls -->
       <div id="user-list-container">
         <a
           href="server_list.html"
