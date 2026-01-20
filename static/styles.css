@@ -270,7 +270,7 @@ li a {
   text-decoration: underline;
 }
 
-#video-chat-container {
+.watchparty #video-chat-container {
   display: flex;
   flex-direction: row;
   gap: 20px;
@@ -279,12 +279,12 @@ li a {
   margin-top: 20px;
 }
 
-#video-section {
+.watchparty #video-section {
   flex: 2;
   max-width: 1200px;
 }
 
-#chat-center {
+.watchparty #chat-center {
   flex: 1.2;
   display: flex;
   flex-direction: column;
@@ -293,7 +293,7 @@ li a {
 }
 
 /* Ensure video controls look clean */
-#video-controls {
+.watchparty #video-controls {
   margin-bottom: 15px;
   width: 100%;
   display: flex;
@@ -301,7 +301,7 @@ li a {
   flex-wrap: wrap;
 }
 
-#video-iframe {
+.watchparty #video-iframe {
   width: 100%;
   aspect-ratio: 16 / 9;
   max-height: 1080px; /* limit max video height if you want */
@@ -311,102 +311,48 @@ li a {
 }
 
 @media (max-width: 950px) {
-  /* Make video and chat stack vertically */
-  #video-chat-container {
+  .watchparty #video-chat-container {
     flex-direction: column;
   }
 
-  /* Force fixed height for video on small screens */
-  #video-iframe {
+  .watchparty #video-iframe {
     aspect-ratio: auto;         /* Disable aspect ratio for small screens */
     height: 420px;              /* Fixed height */
-    max-height: none;           /* Remove any previous cap */
+    max-height: none;           /* Remove previous cap */
   }
 
-  #video-section,
-  #chat-center {
+  .watchparty #video-section,
+  .watchparty #chat-center {
     max-width: 100%;
   }
 
-  /* Hide user list to save space */
-  #user-list-container {
+  .watchparty #user-list-container {
     display: none;
   }
 
-  /* Hide room title on small screens */
-  #room-title {
+  .watchparty #room-title {
     display: none;
   }
 
-  /* tighter page layout */
-  body {
+  .watchparty body {
     padding: 10px;
     height: auto;
   }
 
-  /* Full-height chat layout under video */
-  #chat-center {
+  .watchparty #chat-center {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: stretch;
   }
 
-  /* Limit chat message height so it doesn't overflow */
-  #messages {
-    max-height: calc(100vh - 500px);  /* Adjust this value based on video + chat input */
+  .watchparty #messages {
+    max-height: calc(100vh - 550px); /* Adjust as needed */
     min-height: 150px;
     overflow-y: auto;
   }
 
-  /* Keep the input box anchored just below messages */
-  #chat-form {
-    margin-top: 10px;
-  }
-}@media (max-width: 950px) {
-  #video-chat-container {
-    flex-direction: column;
-  }
-
-  #video-iframe {
-    aspect-ratio: auto; /* disable aspect-ratio */
-    height: 420px;
-  }
-
-  #video-section,
-  #chat-center {
-    max-width: 100%;
-  }
-
-  #user-list-container {
-    display: none;
-  }
-
-  /* 👉 Hide room title */
-  #room-title {
-    display: none;
-  }
-
-  /* 👉 Adjust layout to avoid overflow, enable scroll */
-  body {
-    padding: 10px;
-    height: auto;
-  }
-
-  #chat-center {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  #messages {
-    max-height: calc(100vh - 550px); /* smaller visual height on mobile */
-    min-height: 150px;
-    overflow-y: auto;
-  }
-
-  #chat-form {
+  .watchparty #chat-form {
     margin-top: 10px;
   }
 }
