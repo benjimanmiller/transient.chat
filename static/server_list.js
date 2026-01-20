@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             function createRoomItem({ name, users, type }) {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
-                const isWatchParty = type === 'watchparty';
+                const isWatchParty = type && type.startsWith('watchparty');
                 a.href = isWatchParty
                     ? `/watchparty_chat.html?room=${encodeURIComponent(name)}`
                     : `/chat.html?room=${encodeURIComponent(name)}`;
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 li.appendChild(a);
                 return { li, isWatchParty };
             }
-
+            
             // Add regional rooms
             regional.forEach(room => {
                 regionalList.appendChild(createRoomItem(room).li);
