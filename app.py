@@ -402,6 +402,20 @@ def admin_ban_raw_ip():
     banned_ips.add(ip)
     return jsonify({"banned": ip})
 
+@app.route("/admin/releaseuser", methods=["POST"])
+@requires_auth
+def admin_release_user():
+    data = request.json
+    username = data.get("username")
+    if not username:
+        return jsonify({"error": "no username"}), 400
+
+    user_sessions.pop(username, None)
+    user_ips.pop(username, None)
+    for room in room_users:
+        room_users[room].pop(username, None)
+    return jsonify({"released": username})
+
 
 # Background cleanup thread
 def cleanup_messages():

@@ -19,7 +19,12 @@ async function loadUsers() {
         banUserBtn.style.marginLeft = '5px';
         banUserBtn.onclick = () => banUsername(user.username);
 
-        item.append(label, banIpBtn, banUserBtn);
+        const releaseUserBtn = document.createElement('button');
+        releaseUserBtn.textContent = 'Release Username';
+        releaseUserBtn.style.marginLeft = '5px';
+        releaseUserBtn.onclick = () => releaseUser(user.username);
+
+        item.append(label, banIpBtn, banUserBtn, releaseUserBtn);
         div.appendChild(item);
 
         const br = document.createElement('br');
@@ -130,6 +135,19 @@ async function bulkBanUsernames() {
     loadBanned();
 }
 
+async function releaseUser(username) {
+    if (!confirm(`Release user ${username}?`)) return;
+    const res = await fetch('/admin/releaseuser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+    });
+    const result = await res.json();
+    alert(JSON.stringify(result));
+    loadUsers();
+    loadRooms();
+    loadBanned();
+}
 
 // Initial load
 loadUsers();

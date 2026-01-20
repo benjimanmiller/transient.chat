@@ -304,6 +304,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         isRefreshing = true;
 
         try {
+            // 🔒 Check if user is still valid
+            const res = await fetch('/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, key: userKey })
+            });
+
+            if (!res.ok) {
+                localStorage.clear();
+                alert("Session expired or you were removed.");
+                window.location.href = '/';
+                return;
+            }
+
             await refreshUserPresence();
             await loadMessages();
             await loadUsers();
