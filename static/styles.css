@@ -304,10 +304,10 @@ li a {
 .watchparty #video-iframe {
   width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: 1080px; /* limit max video height if you want */
+  max-height: 1080px;
   border-radius: 8px;
   display: block;
-  height: auto; 
+  height: auto;
 }
 
 @media (max-width: 950px) {
@@ -316,9 +316,12 @@ li a {
   }
 
   .watchparty #video-iframe {
-    aspect-ratio: auto;         /* Disable aspect ratio for small screens */
-    height: 420px;              /* Fixed height */
-    max-height: none;           /* Remove previous cap */
+    aspect-ratio: auto;
+    /* Disable aspect ratio for small screens */
+    height: 420px;
+    /* Fixed height */
+    max-height: none;
+    /* Remove previous cap */
   }
 
   .watchparty #video-section,
@@ -347,7 +350,8 @@ li a {
   }
 
   .watchparty #messages {
-    max-height: calc(100vh - 550px); /* Adjust as needed */
+    max-height: calc(100vh - 550px);
+    /* Adjust as needed */
     min-height: 150px;
     overflow-y: auto;
   }

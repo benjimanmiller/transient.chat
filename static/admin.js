@@ -162,32 +162,32 @@ setInterval(() => {
 }, 5000);
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".collapsible").forEach(header => {
-    const countSpan = header.querySelector('span');
-    const labelText = header.childNodes[0].textContent.trim(); // original text
+    document.querySelectorAll(".collapsible").forEach(header => {
+        const countSpan = header.querySelector('span');
+        const labelText = header.childNodes[0].textContent.trim(); // original text
 
-    // Set initial state
-    if (countSpan) {
-      header.childNodes[0].textContent = '▶ ' + labelText + ' ';
-    } else {
-      header.textContent = '▶ ' + labelText;
-    }
-
-    const content = header.nextElementSibling;
-    if (content && content.classList.contains("collapsible-content")) {
-      content.style.display = 'none';
-
-      header.style.cursor = "pointer";
-      header.addEventListener("click", () => {
-        const isOpen = content.style.display === 'block';
-        content.style.display = isOpen ? 'none' : 'block';
-
+        // Set initial state
         if (countSpan) {
-          header.childNodes[0].textContent = (isOpen ? '▶ ' : '▼ ') + labelText + ' ';
+            header.childNodes[0].textContent = '▶ ' + labelText + ' ';
         } else {
-          header.textContent = (isOpen ? '▶ ' : '▼ ') + labelText;
+            header.textContent = '▶ ' + labelText;
         }
-      });
-    }
-  });
+
+        const content = header.nextElementSibling;
+        if (content && content.classList.contains("collapsible-content")) {
+            content.style.display = 'none';
+
+            header.style.cursor = "pointer";
+            header.addEventListener("click", () => {
+                const isOpen = content.style.display === 'block';
+                content.style.display = isOpen ? 'none' : 'block';
+
+                if (countSpan) {
+                    header.childNodes[0].textContent = (isOpen ? '▶ ' : '▼ ') + labelText + ' ';
+                } else {
+                    header.textContent = (isOpen ? '▶ ' : '▼ ') + labelText;
+                }
+            });
+        }
+    });
 });

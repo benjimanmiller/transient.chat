@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 li.appendChild(a);
                 return { li, isWatchParty };
             }
-            
+
             // Add regional rooms
             regional.forEach(room => {
                 regionalList.appendChild(createRoomItem(room).li);
