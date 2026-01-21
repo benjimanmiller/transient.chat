@@ -357,7 +357,11 @@ def admin_users():
 def admin_rooms():
     return jsonify(
         [
-            {"name": r, "users": list(room_users.get(r, {}).keys())}
+            {
+                "name": r,
+                "users": list(room_users.get(r, {}).keys()),
+                "type": "watchparty" if r in video_state else "chat"
+            }
             for r in list(messages.keys())
         ]
     )

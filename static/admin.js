@@ -44,7 +44,10 @@ async function loadRooms() {
 
     const roomLines = activeRooms.map(r => {
         const users = r.users.join(', ');
-        return `<div><a href="/chat.html?room=${encodeURIComponent(r.name)}" target="_blank">${r.name}</a>: ${users}</div><br />`;
+        const link = r.type === 'watchparty'
+            ? `/watchparty_chat.html?room=${encodeURIComponent(r.name)}`
+            : `/chat.html?room=${encodeURIComponent(r.name)}`;
+        return `<div><a href="${link}" target="_blank">${r.name}</a>: ${users}</div><br />`;
     });
 
     div.innerHTML = roomLines.join('');
