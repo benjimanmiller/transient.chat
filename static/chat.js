@@ -56,14 +56,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         out: new Audio('user-out.wav'),
     };
 
-    let soundEnabled = true;
-    soundToggleBtn.addEventListener("click", () => {
-        soundEnabled = !soundEnabled;
-        soundToggleBtn.textContent = soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off";
-        soundToggleBtn.style.backgroundColor = soundEnabled ? "" : "gray";
-    });
+    // Load saved preferences from localStorage
+    soundEnabled = localStorage.getItem("soundEnabled") !== "false"; // default true
+    externalContentEnabled = localStorage.getItem("externalContentEnabled") === "true"; // default false
 
-    let externalContentEnabled = false;
+    soundToggleBtn.textContent = soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off";
+    soundToggleBtn.style.backgroundColor = soundEnabled ? "" : "gray";
 
     const updateExternalToggleBtn = () => {
         externalToggleBtn.textContent = externalContentEnabled
@@ -72,10 +70,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         externalToggleBtn.style.backgroundColor = externalContentEnabled ? "" : "gray";
     };
 
-    updateExternalToggleBtn(); // Set initial text + style
+    updateExternalToggleBtn(); // Reset style on load
+
+    soundToggleBtn.addEventListener("click", () => {
+        soundEnabled = !soundEnabled;
+        localStorage.setItem("soundEnabled", soundEnabled); // ✅ Persist
+        soundToggleBtn.textContent = soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off";
+        soundToggleBtn.style.backgroundColor = soundEnabled ? "" : "gray";
+    });
 
     externalToggleBtn.addEventListener("click", () => {
         externalContentEnabled = !externalContentEnabled;
+        localStorage.setItem("externalContentEnabled", externalContentEnabled); // ✅ Persist
         updateExternalToggleBtn();
     });
 
