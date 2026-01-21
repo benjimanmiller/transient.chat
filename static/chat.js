@@ -86,11 +86,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     async function refreshUserPresence() {
-        await fetch(`/chat/${encodeURIComponent(room)}/users`, {
+        const res = await fetch(`/chat/${encodeURIComponent(room)}/users`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username })
         });
+
+        if (!res.ok) {
+            alert("You were removed from the room.");
+            window.location.href = "/server_list.html";  // ✅ go to server list
+            return;
+        }
     }
 
     let lastUserList = [];
@@ -224,7 +230,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const res = await fetch(`/chat/${encodeURIComponent(room)}/users`);
         const data = await res.json();
 
-        const currentList = data.users || []; // Extract the array correctly now
+        const currentList = data.users || [];
+        const isOwner = data.owner === username;
         usersDiv.innerHTML = "";
 
         const joined = currentList.filter(user => !lastUserList.includes(user));
@@ -240,6 +247,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         currentList.forEach(user => {
             const div = document.createElement("div");
             div.textContent = user;
+
+            if (isOwner && user !== username) {
+                const btn = document.createElement("button");
+                btn.textContent = "Kick";
+                btn.style.marginLeft = "0.5em";
+                btn.onclick = async () => {
+                    if (confirm(`Kick ${user}?`)) {
+                        await fetch(`/chat/${encodeURIComponent(room)}/kick`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ owner: username, target: user }),
+                        });
+                        await loadUsers();
+                    }
+                };
+                div.appendChild(btn);
+            }
+
             usersDiv.appendChild(div);
         });
     }

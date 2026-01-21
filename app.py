@@ -128,6 +128,8 @@ banned_usernames = set()
 
 user_ips = {}
 
+kicked_users = {}  # ✅ room -> set of usernames
+
 
 def check_auth(username, password):
     return username == os.getenv("ADMIN_USERNAME") and password == os.getenv(
@@ -324,6 +326,9 @@ def room_user_list(room):
         if not username:
             return jsonify({"error": "No username"}), 400
 
+        if username in kicked_users.get(room, set()):
+            return jsonify({"error": "Kicked from room"}), 403
+
         room_users.setdefault(room, {})
         if room not in room_owners and username not in room_users[room]:
             room_owners[room] = username  # First user becomes the owner
@@ -360,7 +365,7 @@ def admin_rooms():
             {
                 "name": r,
                 "users": list(room_users.get(r, {}).keys()),
-                "type": "watchparty" if r in video_state else "chat"
+                "type": "watchparty" if r in video_state else "chat",
             }
             for r in list(messages.keys())
         ]
@@ -445,6 +450,23 @@ def admin_release_user():
     return jsonify({"released": username})
 
 
+@app.route("/chat/<room>/kick", methods=["POST"])
+def kick_user(room):
+    data = request.json
+    owner = data.get("owner")
+    target = data.get("target")
+
+    if not owner or not target:
+        return jsonify({"error": "Missing owner or target"}), 400
+    if room_owners.get(room) != owner:
+        return jsonify({"error": "Not authorized"}), 403
+
+    # ✅ Track user as kicked from this room
+    kicked_users.setdefault(room, set()).add(target)
+    room_users.get(room, {}).pop(target, None)
+    return jsonify({"kicked": target})
+
+
 video_state = {}  # 🧠 Tracks YouTube video and start time for each watchparty room
 
 
@@ -520,6 +542,7 @@ def cleanup_messages():
                 messages.pop(room, None)
                 room_users.pop(room, None)
                 video_state.pop(room, None)
+                kicked_users.pop(room, None)
 
         # Remove inactive user sessions
         user_cutoff = datetime.utcnow() - timedelta(days=3)
