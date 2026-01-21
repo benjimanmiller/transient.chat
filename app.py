@@ -235,15 +235,22 @@ def get_or_create_rooms():
         public_chat_rooms.append(room_name)
         return jsonify({"name": room_name})
 
-    def build_room_data(room_list):
-        return [
-            {
-                "name": room,
-                "users": len(room_users.get(room, {})),
-                "type": "watchparty" if room in video_state else "chat",
-            }
-            for room in room_list
-        ]
+    def build_room_data(room_list, active_only=False):
+        result = []
+        for room in room_list:
+            users = room_users.get(room, {})
+            if active_only and not users:
+                continue
+            result.append(
+                {
+                    "name": room,
+                    "users": len(users),
+                    "type": "watchparty" if room in video_state else "chat",
+                }
+            )
+        return result
+
+    active_only = request.args.get("activeOnly") == "true"
 
     all_users = set()
     for users in room_users.values():
@@ -251,9 +258,9 @@ def get_or_create_rooms():
 
     return jsonify(
         {
-            "regional": build_room_data(regional_chat_rooms),
-            "topical": build_room_data(topical_chat_rooms),
-            "public": build_room_data(public_chat_rooms),
+            "regional": build_room_data(regional_chat_rooms, active_only),
+            "topical": build_room_data(topical_chat_rooms, active_only),
+            "public": build_room_data(public_chat_rooms, active_only),
             "unique_users": len(all_users),
         }
     )
@@ -469,11 +476,13 @@ def watchparty_video_control(room):
     except ValueError:
         return jsonify({"error": "Invalid timestamp"}), 500
 
+
 @app.route("/watchparty/<room>/video/clear", methods=["POST"])
 def clear_watchparty_video(room):
     room = room.strip()
     video_state.pop(room, None)
     return jsonify({"status": "cleared"})
+
 
 # Background cleanup thread
 def cleanup_messages():

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -19,40 +19,61 @@
         class="collapsible-content"
         style="display: none"
       ></ul>
+
       <h2 class="collapsible">▶ Topical Rooms</h2>
       <ul
         id="topical-rooms"
         class="collapsible-content"
         style="display: none"
       ></ul>
+
       <h2 class="collapsible">▶ User Created Public Rooms</h2>
       <ul
         id="public-rooms"
         class="collapsible-content"
         style="display: none"
       ></ul>
+
       <h2 class="collapsible">▶ Watch Party Rooms</h2>
-      <ul id="watchparty-rooms" class="collapsible-content" style="display: none"></ul>
+      <ul
+        id="watchparty-rooms"
+        class="collapsible-content"
+        style="display: none"
+      ></ul>
+
+      <h2 class="collapsible">▶ Active Rooms</h2>
+      <ul
+        id="active-rooms"
+        class="collapsible-content"
+        style="display: none"
+      ></ul>
+
       <br />
 
-        <div id="create-room-form">
-          <input
-            type="text"
-            id="new-room-name"
-            placeholder="Enter new room name"
-          />
-          <br />
-          <div class="button-row">
-            <button id="create-room-btn">Create Public Room</button>
-            <button id="create-unlisted-room-btn">Create Unlisted Room</button>
-          </div>
-          <br />
-          <input type="text" id="new-watchparty-name" placeholder="Enter new watch party name" />
-          <br />
-            <div class="button-row">
-              <button id="create-watchparty-btn">Create Watch Party</button>
-          </div>
+      <div id="create-room-form">
+        <input
+          type="text"
+          id="new-room-name"
+          placeholder="Enter new room name"
+        />
+        <br />
+        <div class="button-row">
+          <button id="create-room-btn">Create Public Room</button>
+          <button id="create-unlisted-room-btn">Create Unlisted Room</button>
         </div>
+        <br />
+        <input
+          type="text"
+          id="new-watchparty-name"
+          placeholder="Enter new watch party name"
+        />
+        <br />
+        <div class="button-row">
+          <button id="create-watchparty-btn">Create Watch Party</button>
+        </div>
+      </div>
+    </div>
+
     <script src="server_list.js"></script>
   </body>
 </html>

@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const userInfoEl = document.getElementById('user-info');
-    userInfoEl.textContent = `Logged in as: ${username} (Key: ${userKey})`;
+    userInfoEl.textContent = `Logged in as: ${username}`;
 
     document.querySelectorAll('.collapsible').forEach(heading => {
         heading.addEventListener('click', () => {
@@ -82,6 +82,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // Show total unique user count
             document.getElementById('user-count').textContent = `Users Chatting ( ${unique_users} )`;
+
+            // 🧠 Load and render Active Rooms (regional, topical, public w/ users)
+            fetch("/rooms?activeOnly=true")
+                .then(response => response.json())
+                .then(({ regional, topical, public: publicRooms }) => {
+                    const activeList = document.getElementById("active-rooms");
+                    let count = 0;
+
+                    function createActiveRoomItem({ name, users, type }) {
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+
+                        a.href = type === "watchparty"
+                            ? `/watchparty_chat.html?room=${encodeURIComponent(name)}`
+                            : `/chat.html?room=${encodeURIComponent(name)}`;
+                        a.textContent = `${name}  ( ${users} )`;
+                        li.appendChild(a);
+                        return li;
+                    }
+
+                    [...regional, ...topical, ...publicRooms].forEach(room => {
+                        activeList.appendChild(createActiveRoomItem(room));
+                        count++;
+                    });
+
+                    // Update Active Rooms heading with count
+                    const activeHeadingEl = [...document.querySelectorAll("h2.collapsible")].find(
+                        el => el.textContent.includes("Active Rooms")
+                    );
+                    if (activeHeadingEl) {
+                        const baseText = activeHeadingEl.textContent.replace(/▶|▼|\(\d+\)/g, "").trim();
+                        activeHeadingEl.textContent = `▶ ${baseText} ( ${count} )`;
+                    }
+                })
+                .catch(err => {
+                    console.error("Failed to load active rooms:", err);
+                });
         })
         .catch(err => {
             console.error("Failed to load rooms:", err);
