@@ -1,5 +1,26 @@
-/vendor/
-/__pycache__/
-/.venv/
-/notes/
+# Virtual environments
+.venv/
+venv/
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Environment files
 .env
+
+# Vendor or third-party libraries
+/vendor/
+
+# Editor/IDE settings
+.vscode/
+.idea/
+
+# Notes or temp folders
+/notes/
