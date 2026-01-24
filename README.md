@@ -71,7 +71,28 @@ transient.chat/
 │   ├── admin.py
 │   ├── watchparty.py
 │   └── static_routes.py
-├── static/            # Frontend: index.html, JS, CSS, assets
+├── static/
+│   └── html/          # Public-facing HTML files and assets
+│       ├── index.html
+│       ├── chatroom.html
+│       ├── watchparty.html
+│       ├── faq.html
+│       ├── admin.html
+│       └── assets/    # Frontend resources (linked from HTML)
+│           ├── css/       # Stylesheets
+│           │   ├── styles.css
+│           ├── js/        # JavaScript files
+│           │   ├── admin.js
+│           │   ├── chat.js
+│           │   ├── faq.js
+│           │   ├── index.js
+│           │   ├── server_list.js
+│           │   └── watchparty_chat.js/
+│           ├── sounds/    # .wav audio clips for UI events
+│           │   ├── user-in.wav
+│           │   ├── user-out.wav
+│           │   └── message.wav
+│           └── favicon.ico
 └── requirements.txt   # Python dependencies
 ```
 

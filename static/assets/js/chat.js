@@ -51,9 +51,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Audio setup
     const sounds = {
-        message: new Audio('message.wav'),
-        in: new Audio('user-in.wav'),
-        out: new Audio('user-out.wav'),
+        message: new Audio('/assets/sounds/message.wav'),
+        in: new Audio('/assets/sounds/user-in.wav'),
+        out: new Audio('/assets/sounds/user-out.wav'),
     };
 
     // Load saved preferences from localStorage
