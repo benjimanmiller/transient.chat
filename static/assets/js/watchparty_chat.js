@@ -24,7 +24,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    document.getElementById("room-title").textContent = `Room: ${room}`;
+        document.getElementById("room-title").innerHTML = `
+      <div class="title-row">
+        <img src="/assets/images/transientchat-blue.png" alt="Transient.chat" style="height: 60px;"/>
+        Room: ${room}
+      </div>
+    `;;
 
     const videoControls = document.getElementById("video-controls");
     const videoInput = document.getElementById("video-url-input");
