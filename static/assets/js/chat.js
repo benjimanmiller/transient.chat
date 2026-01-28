@@ -42,7 +42,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("room-title").innerHTML = `
       <div class="title-row">
+        <a href="index.html">
         <img src="/assets/images/transientchat-blue.png" alt="Transient.chat" style="height: 60px;"/>
+        <a/>
         Room: ${room}
       </div>
     `;
