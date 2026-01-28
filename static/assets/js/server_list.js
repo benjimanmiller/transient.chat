@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 🔥 Watch Party creation
     document.getElementById('create-watchparty-btn').addEventListener('click', () => {
-        const roomName = document.getElementById('new-watchparty-name').value.trim();
+        const roomName = document.getElementById('new-room-name').value.trim();
         if (!roomName) return alert('Room name cannot be empty.');
 
         fetch('/rooms', {
@@ -178,7 +178,7 @@ document.getElementById('new-room-name').addEventListener('keydown', (event) => 
 });
 
 // Enable Enter key for watch party creation
-document.getElementById('new-watchparty-name').addEventListener('keydown', (event) => {
+document.getElementById('new-room-name').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
         document.getElementById('create-watchparty-btn').click();
     }
