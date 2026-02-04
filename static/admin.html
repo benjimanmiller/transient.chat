@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Transient.chat - Admin Panel</title>
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
   </head>
   <body>
     <div class="title-row">
@@ -20,6 +21,12 @@
 
     <h2 class="collapsible">Active Users <span id="activeUserCount"></span></h2>
     <div class="collapsible-content" id="userList">Loading...</div>
+
+    <h2>System Broadcast</h2>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <input type="text" id="broadcastInput" placeholder="Message to all rooms..." style="width: 300px;">
+        <button onclick="broadcastSystemMessage()">Send to All</button>
+    </div>
 
     <h2>Bulk Ban IPs / Usernames</h2>
     <textarea

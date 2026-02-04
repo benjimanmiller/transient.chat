@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
+import time
 
 from models.state import (
     messages,
@@ -9,6 +10,7 @@ from models.state import (
     banned_ips,
     banned_usernames,
     user_ips,
+    nuked_rooms,
 )
 
 chat_bp = Blueprint("chat", __name__)
@@ -74,6 +76,14 @@ def chat_room(room):
 @chat_bp.route("/chat/<room>/users", methods=["GET", "POST"])
 def room_user_list(room):
     room = room.strip()
+
+    # Check if room is temporarily locked (nuked)
+    if room in nuked_rooms:
+        if time.time() < nuked_rooms[room]:
+            return jsonify({"error": "Room is unavailable"}), 403
+        else:
+            nuked_rooms.pop(room, None)
+
     if request.method == "POST":
         data = request.json
         username = data.get("username")

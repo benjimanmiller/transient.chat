@@ -38,7 +38,8 @@ def cleanup_loop():
             if not last_active or all(
                 datetime.fromisoformat(ts) < inactive_cutoff for ts in last_active
             ):
-                public_chat_rooms.remove(room)
+                if room in public_chat_rooms:
+                    public_chat_rooms.remove(room)
                 messages.pop(room, None)
                 room_users.pop(room, None)
                 kicked_users.pop(room, None)

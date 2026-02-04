@@ -1,7 +1,8 @@
-from flask import Blueprint, request, jsonify, Response
+from flask import Blueprint, request, jsonify, Response, send_from_directory
 from functools import wraps
 from datetime import datetime
 import os
+import time
 
 from models.state import (
     user_sessions,
@@ -12,6 +13,9 @@ from models.state import (
     banned_usernames,
     kicked_users,
     video_state,
+    room_owners,
+    nuked_rooms,
+    public_chat_rooms,
 )
 
 admin_bp = Blueprint("admin", __name__)
@@ -43,10 +47,8 @@ def requires_auth(f):
 @admin_bp.route("/admin")
 @requires_auth
 def admin_panel():
-    try:
-        return open("static/admin.html").read()
-    except FileNotFoundError:
-        return "admin.html not found", 404
+    """Serves the static admin HTML file."""
+    return send_from_directory("static", "admin.html")
 
 
 @admin_bp.route("/admin/users", methods=["GET"])
@@ -153,3 +155,45 @@ def admin_release_user():
         room_users[room].pop(username, None)
 
     return jsonify({"released": username})
+
+
+@admin_bp.route("/admin/broadcast", methods=["POST"])
+@requires_auth
+def admin_broadcast():
+    """Sends a system message to all active rooms."""
+    data = request.get_json()
+    text = data.get("text")
+
+    if not text:
+        return jsonify({"error": "no text"}), 400
+
+    timestamp = datetime.utcnow().isoformat()
+    message = {"username": "SYSTEM", "text": text, "timestamp": timestamp}
+
+    count = 0
+    for room in messages:
+        messages[room].append(message)
+        count += 1
+
+    return jsonify({"status": "sent", "rooms_affected": count})
+
+
+@admin_bp.route("/admin/nukeroom", methods=["POST"])
+@requires_auth
+def admin_nuke_room():
+    """Instantly deletes a room and clears its state."""
+    data = request.get_json()
+    room = data.get("room")
+
+    # Lock the room for 10 seconds to force all clients to disconnect
+    nuked_rooms[room] = time.time() + 10
+
+    messages.pop(room, None)
+    room_users.pop(room, None)
+    room_owners.pop(room, None)
+    video_state.pop(room, None)
+    
+    if room in public_chat_rooms:
+        public_chat_rooms.remove(room)
+
+    return jsonify({"status": "nuked", "room": room})

@@ -28,6 +28,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (response.ok) {
                 redirectToRoom(room);
                 return;
+            } else {
+                // Session expired or invalid; clear storage but pre-fill username
+                localStorage.clear();
+                const input = document.getElementById('username-input');
+                if (input) input.value = storedUsername;
             }
         } catch (err) {
             console.error('Validation error:', err);

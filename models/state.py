@@ -1,13 +1,18 @@
-user_sessions = {}
-messages = {}
-room_users = {}
-banned_ips = set()
-banned_usernames = set()
-user_ips = {}
-kicked_users = {}
-room_owners = {}
-public_chat_rooms = []
-video_state = {}
+from typing import Dict, List, Set
+
+# In-Memory Data Stores
+# Since this app is ephemeral, we use global dictionaries instead of a database.
+user_sessions: Dict[str, dict] = {}  # {username: {'key': str, 'last_active': str}}
+messages: Dict[str, List[dict]] = {}  # {room_name: [{'username': str, 'text': str, 'timestamp': str}]}
+room_users: Dict[str, Dict[str, str]] = {}  # {room_name: {username: last_active_timestamp}}
+banned_ips: Set[str] = set()
+banned_usernames: Set[str] = set()
+user_ips: Dict[str, str] = {}  # {username: ip_address}
+kicked_users: Dict[str, Set[str]] = {}  # {room_name: {kicked_username}}
+room_owners: Dict[str, str] = {}  # {room_name: owner_username}
+public_chat_rooms: List[str] = []  # List of user-created public room names
+video_state: Dict[str, dict] = {}  # {room_name: {'url': str, 'started_at': str}}
+nuked_rooms: Dict[str, float] = {}  # {room_name: expiry_timestamp_epoch}
 
 regional_chat_rooms = [
     "Alabama",

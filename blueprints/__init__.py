@@ -1,3 +1,4 @@
+from flask import Flask
 from .auth import auth_bp
 from .chat import chat_bp
 from .rooms import rooms_bp
@@ -6,7 +7,7 @@ from .admin import admin_bp
 from .static_routes import static_bp
 
 
-def register_blueprints(app):
+def register_blueprints(app: Flask):
     app.register_blueprint(auth_bp)
     app.register_blueprint(chat_bp)
     app.register_blueprint(rooms_bp)

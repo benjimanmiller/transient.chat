@@ -42,15 +42,29 @@ async function loadRooms() {
 
     const activeRooms = rooms.filter(r => r.users.length > 0); // Filter active only
 
-    const roomLines = activeRooms.map(r => {
-        const users = r.users.join(', ');
-        const link = r.type === 'watchparty'
+    div.innerHTML = ''; // Clear previous content
+
+    activeRooms.forEach(r => {
+        const container = document.createElement('div');
+        const link = document.createElement('a');
+        link.href = r.type === 'watchparty'
             ? `/watchparty_chat.html?room=${encodeURIComponent(r.name)}`
             : `/chat.html?room=${encodeURIComponent(r.name)}`;
-        return `<div><a href="${link}" target="_blank">${r.name}</a>: ${users}</div><br />`;
-    });
+        link.target = "_blank";
+        link.textContent = r.name;
 
-    div.innerHTML = roomLines.join('');
+        const text = document.createTextNode(`: ${r.users.join(', ')}`);
+
+        const nukeBtn = document.createElement('button');
+        nukeBtn.textContent = 'Nuke';
+        nukeBtn.style.marginLeft = '10px';
+        nukeBtn.style.backgroundColor = '#d9534f'; // Red warning color
+        nukeBtn.onclick = () => nukeRoom(r.name);
+
+        container.append(link, text, nukeBtn);
+        div.appendChild(container);
+        div.appendChild(document.createElement('br'));
+    });
     countDisplay.textContent = `(${activeRooms.length})`;
 }
 
@@ -150,6 +164,33 @@ async function releaseUser(username) {
     loadUsers();
     loadRooms();
     loadBanned();
+}
+
+async function broadcastSystemMessage() {
+    const input = document.getElementById('broadcastInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    if (!confirm(`Broadcast to ALL rooms: "${text}"?`)) return;
+
+    const res = await fetch('/admin/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+    });
+    const result = await res.json();
+    alert(`Broadcast sent to ${result.rooms_affected} rooms.`);
+    input.value = '';
+}
+
+async function nukeRoom(room) {
+    if (!confirm(`Are you sure you want to NUKE room: "${room}"? This will delete all history and kick users.`)) return;
+    await fetch('/admin/nukeroom', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room })
+    });
+    loadRooms();
 }
 
 // Initial load

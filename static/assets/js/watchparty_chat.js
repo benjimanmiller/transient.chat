@@ -10,28 +10,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    try {
-        const res = await fetch("/validate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, key: userKey }),
-        });
-        if (!res.ok) throw new Error("User not validated");
-    } catch (err) {
-        localStorage.clear();
-        alert("Validation failed.");
-        window.location.href = `/index.html${room ? `?room=${encodeURIComponent(room)}&watchparty=1` : ""}`;
-        return;
-    }
-
-    document.getElementById("room-title").innerHTML = `
-      <div class="title-row">
-        <a href="index.html">
-        <img src="/assets/images/transientchat-blue.png" alt="Transient.chat" style="height: 60px;"/>
-        <a/>
-        Room: ${room}
-      </div>
-    `;;
+    // Note: We rely on chat.js (loaded in the HTML) to handle the server-side
+    // /validate call and the rendering of the #room-title header.
+    // This script focuses solely on the video synchronization logic.
 
     const videoControls = document.getElementById("video-controls");
     const videoInput = document.getElementById("video-url-input");

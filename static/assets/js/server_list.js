@@ -108,9 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     });
 
                     // Update Active Rooms heading with count
-                    const activeHeadingEl = [...document.querySelectorAll("h2.collapsible")].find(
-                        el => el.textContent.includes("Active Rooms")
-                    );
+                    const activeHeadingEl = document.getElementById("active-rooms-header");
                     if (activeHeadingEl) {
                         const baseText = activeHeadingEl.textContent.replace(/▶|▼|\(\d+\)/g, "").trim();
                         activeHeadingEl.textContent = `▶ ${baseText} ( ${count} )`;
@@ -146,6 +144,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById('create-unlisted-room-btn').addEventListener('click', () => {
         const roomName = document.getElementById('new-room-name').value.trim();
+        if (!roomName) return alert('Room name cannot be empty.');
         window.location.href = `/chat.html?room=${encodeURIComponent(roomName)}`;
     });
 

@@ -1,12 +1,6 @@
-const params = new URLSearchParams(window.location.search);
-const room = params.get("room");
-if (room) {
-    document.title = `${room}`;
-}
-
 document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
-    const room = params.get("room");
+    const room = params.get("room") || "Unknown Room";
     const username = localStorage.getItem("username");
     const userKey = localStorage.getItem("userKey");
     let firstLoad = true;
@@ -18,6 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.href = url;
         return;
     }
+
+    document.title = room;
 
     try {
         const res = await fetch('/validate', {
@@ -40,12 +36,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
+    // 🔒 Security: Escape HTML to prevent XSS
+    function escapeHtml(text) {
+        if (!text) return text;
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     document.getElementById("room-title").innerHTML = `
       <div class="title-row">
-        <a href="index.html">
+        <a href="server_list.html">
         <img src="/assets/images/transientchat-blue.png" alt="Transient.chat" style="height: 60px;"/>
         <a/>
-        Room: ${room}
+        Room: ${escapeHtml(room)}
       </div>
     `;
 
@@ -124,7 +131,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     function linkify(text) {
-        return text.replace(/(https?:\/\/[^\s]+)/g, (url) => {
+        // 1. Escape the raw text first to prevent XSS
+        const safeText = escapeHtml(text);
+
+        // 2. Replace URLs in the escaped text with HTML
+        return safeText.replace(/(https?:\/\/[^\s]+)/g, (url) => {
             const imagePattern = /\.(png|jpe?g|gif)$/i;
             const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/;
 
@@ -305,7 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (msg.username === username) {
                 div.classList.add("my-message");
             }
-            div.innerHTML = `<strong>${msg.username}:</strong> ${linkify(msg.text)}`;
+            div.innerHTML = `<strong>${escapeHtml(msg.username)}:</strong> ${linkify(msg.text)}`;
             messagesDiv.appendChild(div);
         });
 
