@@ -20,6 +20,8 @@
             placeholder="Paste YouTube video URL..."
           />
           <button id="start-video-button">▶️ Play</button>
+          <button id="pause-video-button" style="display: none">⏸ Pause</button>
+          <button id="resume-video-button" style="display: none">▶ Resume</button>
           <button id="clear-video-button" style="display: none">
             🛑 Clear Video
           </button>
@@ -33,6 +35,11 @@
             allow="autoplay; encrypted-media"
             style="display: none"
           ></iframe>
+          <img
+            id="paused-overlay"
+            src="/assets/images/paused.png"
+            style="display: none; width: 100%; height: 100%; object-fit: contain; background: #000;"
+          />
         </div>
       </div>
 

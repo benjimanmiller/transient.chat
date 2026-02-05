@@ -17,8 +17,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const videoControls = document.getElementById("video-controls");
     const videoInput = document.getElementById("video-url-input");
     const videoButton = document.getElementById("start-video-button");
+    const pauseButton = document.getElementById("pause-video-button");
+    const resumeButton = document.getElementById("resume-video-button");
     const clearButton = document.getElementById("clear-video-button");
     const iframe = document.getElementById("video-iframe");
+    const pausedOverlay = document.getElementById("paused-overlay");
 
     let videoExpireAt = null;
     let videoStarted = false;
@@ -47,19 +50,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         videoExpireAt = null;
         videoStarted = false;
         lastVideoId = null;
-        updateControlVisibility({ isPlaying: false, isOwner: isRoomOwner });
+        pausedOverlay.style.display = "none";
+        updateControlVisibility({ hasVideo: false, isPaused: false, isOwner: isRoomOwner });
     }
 
-    function updateControlVisibility({ isPlaying, isOwner }) {
+    function updateControlVisibility({ hasVideo, isPaused, isOwner }) {
         if (isOwner) {
-            if (isPlaying) {
+            if (hasVideo) {
                 videoInput.style.display = "none";
                 videoButton.style.display = "none";
                 clearButton.style.display = "inline-block";
+
+                if (isPaused) {
+                    pauseButton.style.display = "none";
+                    resumeButton.style.display = "inline-block";
+                } else {
+                    pauseButton.style.display = "inline-block";
+                    resumeButton.style.display = "none";
+                }
             } else {
                 videoInput.style.display = "inline-block";
                 videoButton.style.display = "inline-block";
                 clearButton.style.display = "none";
+                pauseButton.style.display = "none";
+                resumeButton.style.display = "none";
             }
             videoControls.style.display = "block";
         } else {
@@ -98,7 +112,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         videoStarted = true;
 
         loadYouTubeVideo(videoId);
-        updateControlVisibility({ isPlaying: true, isOwner: isRoomOwner });
+        updateControlVisibility({ hasVideo: true, isPaused: false, isOwner: isRoomOwner });
+    });
+
+    pauseButton.addEventListener("click", async () => {
+        try {
+            await fetch(`/watchparty/${encodeURIComponent(room)}/video/pause`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username }),
+            });
+        } catch (err) {
+            console.error("Failed to pause video", err);
+        }
+    });
+
+    resumeButton.addEventListener("click", async () => {
+        try {
+            await fetch(`/watchparty/${encodeURIComponent(room)}/video/resume`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username }),
+            });
+        } catch (err) {
+            console.error("Failed to resume video", err);
+        }
     });
 
     clearButton.addEventListener("click", async () => {
@@ -120,19 +158,32 @@ document.addEventListener("DOMContentLoaded", async () => {
             const res = await fetch(`/watchparty/${encodeURIComponent(room)}/video`);
             if (!res.ok) throw new Error("video fetch failed");
 
-            const { url, elapsed } = await res.json();
+            const { url, elapsed, is_paused } = await res.json();
             const videoId = extractYouTubeId(url);
             if (!videoId) {
                 clearVideoUI();
                 return;
             }
 
+            if (is_paused) {
+                if (iframe.style.display !== "none") {
+                    iframe.style.display = "none";
+                    iframe.src = ""; // Stop audio
+                    pausedOverlay.style.display = "block";
+                    lastVideoId = null; // Force reload on resume
+                }
+                videoStarted = true;
+                updateControlVisibility({ hasVideo: true, isPaused: true, isOwner: isRoomOwner });
+                return;
+            }
+
+            pausedOverlay.style.display = "none";
             const duration = await fetchYouTubeDuration(videoId);
             videoExpireAt = Date.now() + ((duration - elapsed) * 1000);
             videoStarted = true;
 
             loadYouTubeVideo(videoId, elapsed);
-            updateControlVisibility({ isPlaying: true, isOwner: isRoomOwner });
+            updateControlVisibility({ hasVideo: true, isPaused: false, isOwner: isRoomOwner });
         } catch (err) {
             // Fallback: video was likely cleared
             if (videoStarted || iframe.style.display !== "none") {
@@ -165,7 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await checkRoomOwnership();
         await syncVideoFromServer();
         if (!videoStarted) {
-            updateControlVisibility({ isPlaying: false, isOwner: isRoomOwner });
+            updateControlVisibility({ hasVideo: false, isPaused: false, isOwner: isRoomOwner });
         }
     }
 
