@@ -37,7 +37,7 @@ def chat_room(room):
         data = request.json
         username = data.get("username")
         text = data.get("text")
-        user_ip = request.remote_addr
+        user_ip = request.headers.get("X-Forwarded-For", request.remote_addr).split(",")[0].strip()
 
         if (
             user_ip in banned_ips

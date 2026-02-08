@@ -17,7 +17,7 @@ def generate_user_key(length=16):
 def register():
     data = request.get_json()
     username = data.get("username")
-    user_ip = request.remote_addr
+    user_ip = request.headers.get("X-Forwarded-For", request.remote_addr).split(",")[0].strip()
 
     if not username:
         return jsonify({"error": "No username provided"}), 400
