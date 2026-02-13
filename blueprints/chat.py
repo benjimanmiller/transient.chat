@@ -37,6 +37,7 @@ def chat_room(room):
         data = request.json
         username = data.get("username")
         text = data.get("text")
+        audio = data.get("audio")
         user_ip = request.headers.get("X-Forwarded-For", request.remote_addr).split(",")[0].strip()
 
         if (
@@ -49,6 +50,7 @@ def chat_room(room):
         message = {
             "username": username,
             "text": text,
+            "audio": audio,
             "timestamp": datetime.utcnow().isoformat(),
         }
         messages.setdefault(room, []).append(message)

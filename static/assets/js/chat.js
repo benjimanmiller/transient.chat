@@ -63,6 +63,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     const soundToggleBtn = document.getElementById("sound-toggle");
     const externalToggleBtn = document.getElementById("external-toggle");
 
+    // 🎤 Voice Message Setup
+    const micBtn = document.createElement("button");
+    micBtn.textContent = "🎤";
+    micBtn.type = "button";
+    micBtn.style.marginLeft = "0.5em";
+    micBtn.style.marginRight = "0.5em";
+    micBtn.title = "Hold to record (max 15s)";
+    
+    // Insert mic button after input (between input and send button)
+    if (input && input.parentNode) {
+        input.parentNode.insertBefore(micBtn, input.nextSibling);
+    }
+
+    // 🗣️ Autoplay Toggle
+    const autoplayToggleBtn = document.createElement("button");
+    // Insert after external toggle
+    if (externalToggleBtn && externalToggleBtn.parentNode) {
+        externalToggleBtn.parentNode.insertBefore(autoplayToggleBtn, externalToggleBtn.nextSibling);
+    }
+
     // Audio setup
     const sounds = {
         message: new Audio('/assets/sounds/message.wav'),
@@ -72,10 +92,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Load saved preferences from localStorage
     soundEnabled = localStorage.getItem("soundEnabled") !== "false"; // default true
-    externalContentEnabled = localStorage.getItem("externalContentEnabled") === "true"; // default false
+    externalContentEnabled = localStorage.getItem("externalContentEnabled") !== "false"; // default true
+    let autoplayEnabled = localStorage.getItem("autoplayEnabled") !== "false"; // default true
 
     soundToggleBtn.textContent = soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off";
     soundToggleBtn.style.backgroundColor = soundEnabled ? "" : "gray";
+
+    const updateAutoplayToggleBtn = () => {
+        autoplayToggleBtn.textContent = autoplayEnabled
+            ? "🗣️ Autoplay: On"
+            : "🔇 Autoplay: Off";
+        autoplayToggleBtn.style.backgroundColor = autoplayEnabled ? "" : "gray";
+    };
+    updateAutoplayToggleBtn();
 
     const updateExternalToggleBtn = () => {
         externalToggleBtn.textContent = externalContentEnabled
@@ -98,6 +127,78 @@ document.addEventListener("DOMContentLoaded", async () => {
         localStorage.setItem("externalContentEnabled", externalContentEnabled); // ✅ Persist
         updateExternalToggleBtn();
     });
+
+    autoplayToggleBtn.addEventListener("click", () => {
+        autoplayEnabled = !autoplayEnabled;
+        localStorage.setItem("autoplayEnabled", autoplayEnabled);
+        updateAutoplayToggleBtn();
+    });
+
+    // Recording Logic
+    let mediaRecorder;
+    let audioChunks = [];
+    let isRecording = false;
+    let recordingTimeout;
+
+    async function startRecording() {
+        if (isRecording) return;
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            // Low bitrate preference (16kbps)
+            const options = { mimeType: 'audio/webm;codecs=opus', bitsPerSecond: 16000 };
+            // Fallback if codec not supported
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) delete options.mimeType;
+
+            mediaRecorder = new MediaRecorder(stream, options);
+            audioChunks = [];
+            isRecording = true;
+            micBtn.style.backgroundColor = "red";
+            micBtn.textContent = "⏹️";
+
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                micBtn.style.backgroundColor = "";
+                micBtn.textContent = "🎤";
+                isRecording = false;
+                clearTimeout(recordingTimeout);
+                
+                const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => {
+                    const base64Audio = reader.result;
+                    // Send immediately
+                    fetch(`/chat/${encodeURIComponent(room)}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, text: "🎤 Voice Message", audio: base64Audio })
+                    }).then(() => refresh());
+                };
+                stream.getTracks().forEach(t => t.stop());
+            };
+
+            mediaRecorder.start();
+            recordingTimeout = setTimeout(() => {
+                if (isRecording && mediaRecorder.state === "recording") mediaRecorder.stop();
+            }, 15000); // 15s limit
+
+        } catch (err) {
+            console.error("Mic error:", err);
+            alert("Could not access microphone.");
+        }
+    }
+
+    function stopRecording() {
+        if (isRecording && mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+        }
+    }
+
+    micBtn.addEventListener("mousedown", startRecording);
+    micBtn.addEventListener("mouseup", stopRecording);
+    micBtn.addEventListener("mouseleave", stopRecording);
+    micBtn.addEventListener("touchstart", (e) => { e.preventDefault(); startRecording(); });
+    micBtn.addEventListener("touchend", (e) => { e.preventDefault(); stopRecording(); });
 
     async function refreshUserPresence() {
         const res = await fetch(`/chat/${encodeURIComponent(room)}/users`, {
@@ -317,6 +418,27 @@ document.addEventListener("DOMContentLoaded", async () => {
                 div.classList.add("my-message");
             }
             div.innerHTML = `<strong>${escapeHtml(msg.username)}:</strong> ${linkify(msg.text)}`;
+
+            if (msg.audio) {
+                const audioContainer = document.createElement("div");
+                audioContainer.style.marginTop = "0.25em";
+                const audio = document.createElement("audio");
+                audio.controls = true;
+                audio.style.height = "30px";
+                audio.style.maxWidth = "100%";
+                
+                // Autoplay if enabled, not first load, and not my own message
+                if (autoplayEnabled && !firstLoad && msg.username !== username) {
+                    audio.addEventListener("canplay", () => {
+                        audio.play().catch(e => console.log("Autoplay blocked:", e));
+                    }, { once: true });
+                }
+
+                audio.src = msg.audio;
+                audioContainer.appendChild(audio);
+                div.appendChild(audioContainer);
+            }
+
             messagesDiv.appendChild(div);
         });
 
