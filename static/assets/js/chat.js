@@ -218,6 +218,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     let lastTimestamp = null;
     const seenMessageTimestamps = new Set();
 
+    const audioQueue = [];
+    let isPlayingAudio = false;
+
+    function processAudioQueue() {
+        if (isPlayingAudio || audioQueue.length === 0) return;
+
+        const audio = audioQueue.shift();
+        isPlayingAudio = true;
+
+        const onComplete = () => {
+            isPlayingAudio = false;
+            processAudioQueue();
+        };
+
+        audio.addEventListener('ended', onComplete, { once: true });
+        audio.addEventListener('error', () => {
+            console.error("Audio playback error");
+            onComplete();
+        }, { once: true });
+
+        audio.play().catch(e => {
+            console.log("Autoplay blocked or failed:", e);
+            onComplete();
+        });
+    }
+
     let windowFocused = true;
     let unreadCount = 0;
 
@@ -427,14 +453,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 audio.style.height = "30px";
                 audio.style.maxWidth = "100%";
                 
+                audio.src = msg.audio;
+
                 // Autoplay if enabled, not first load, and not my own message
                 if (autoplayEnabled && !firstLoad && msg.username !== username) {
-                    audio.addEventListener("canplay", () => {
-                        audio.play().catch(e => console.log("Autoplay blocked:", e));
-                    }, { once: true });
+                    audioQueue.push(audio);
+                    processAudioQueue();
                 }
 
-                audio.src = msg.audio;
                 audioContainer.appendChild(audio);
                 div.appendChild(audioContainer);
             }
