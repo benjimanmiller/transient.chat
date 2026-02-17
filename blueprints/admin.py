@@ -20,6 +20,8 @@ from models.state import (
 
 admin_bp = Blueprint("admin", __name__)
 
+SERVER_START_TIME = time.time()
+
 
 def check_auth(username, password):
     return username == os.getenv("ADMIN_USERNAME") and password == os.getenv(
@@ -51,6 +53,19 @@ def admin_panel():
     return send_from_directory("static", "admin.html")
 
 
+@admin_bp.route("/admin/stats", methods=["GET"])
+@requires_auth
+def admin_stats():
+    total_messages = sum(len(msgs) for msgs in messages.values())
+    return jsonify({
+        "uptime": int(time.time() - SERVER_START_TIME),
+        "active_users": len(user_sessions),
+        "active_rooms": len(room_users),
+        "total_messages": total_messages,
+        "banned_count": len(banned_ips) + len(banned_usernames)
+    })
+
+
 @admin_bp.route("/admin/users", methods=["GET"])
 @requires_auth
 def admin_users():
@@ -75,6 +90,9 @@ def admin_rooms():
                 "name": r,
                 "users": list(room_users.get(r, {}).keys()),
                 "type": "watchparty" if r in video_state else "chat",
+                "owner": room_owners.get(r, "System"),
+                "msg_count": len(messages.get(r, [])),
+                "is_public": r in public_chat_rooms,
             }
             for r in list(messages.keys())
         ]

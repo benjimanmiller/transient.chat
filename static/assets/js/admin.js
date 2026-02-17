@@ -1,3 +1,23 @@
+async function loadStats() {
+    const res = await fetch('/admin/stats');
+    const stats = await res.json();
+    const div = document.getElementById('serverStats');
+    
+    const formatTime = (s) => {
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        return `${h}h ${m}m`;
+    };
+
+    div.innerHTML = `
+        <div style="text-align: center;"><strong>Uptime</strong><br>${formatTime(stats.uptime)}</div>
+        <div style="text-align: center;"><strong>Users</strong><br>${stats.active_users}</div>
+        <div style="text-align: center;"><strong>Rooms</strong><br>${stats.active_rooms}</div>
+        <div style="text-align: center;"><strong>Messages</strong><br>${stats.total_messages}</div>
+        <div style="text-align: center;"><strong>Bans</strong><br>${stats.banned_count}</div>
+    `;
+}
+
 async function loadUsers() {
     const res = await fetch('/admin/users');
     const users = await res.json();
@@ -26,9 +46,6 @@ async function loadUsers() {
 
         item.append(label, banIpBtn, banUserBtn, releaseUserBtn);
         div.appendChild(item);
-
-        const br = document.createElement('br');
-        div.appendChild(br);
     });
 
     countDisplay.textContent = `(${users.length})`;
@@ -53,7 +70,11 @@ async function loadRooms() {
         link.target = "_blank";
         link.textContent = r.name;
 
-        const text = document.createTextNode(`: ${r.users.join(', ')}`);
+        const details = document.createElement('span');
+        details.style.fontSize = '0.9em';
+        details.style.color = '#666';
+        details.style.marginLeft = '10px';
+        details.textContent = `Owner: ${r.owner} | Msgs: ${r.msg_count} | ${r.is_public ? 'Public' : 'Unlisted'} | Users: ${r.users.join(', ')}`;
 
         const nukeBtn = document.createElement('button');
         nukeBtn.textContent = 'Nuke';
@@ -61,9 +82,8 @@ async function loadRooms() {
         nukeBtn.style.backgroundColor = '#d9534f'; // Red warning color
         nukeBtn.onclick = () => nukeRoom(r.name);
 
-        container.append(link, text, nukeBtn);
+        container.append(link, details, nukeBtn);
         div.appendChild(container);
-        div.appendChild(document.createElement('br'));
     });
     countDisplay.textContent = `(${activeRooms.length})`;
 }
@@ -197,12 +217,14 @@ async function nukeRoom(room) {
 loadUsers();
 loadRooms();
 loadBanned();
+loadStats();
 
 // Refresh every 5 seconds
 setInterval(() => {
     loadUsers();
     loadRooms();
     loadBanned();
+    loadStats();
 }, 5000);
 
 document.addEventListener("DOMContentLoaded", () => {
