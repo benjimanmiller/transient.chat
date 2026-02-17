@@ -156,6 +156,7 @@ button:hover {
   border-radius: 8px;
   padding: 15px;
   height: fit-content;
+  transition: max-height 0.3s ease-in-out;
 }
 
 #user-list-container h3 {
@@ -167,6 +168,16 @@ button:hover {
   padding: 5px 0;
   color: #ccc;
   border-bottom: 1px solid #333;
+}
+
+#user-list-container > button {
+  display: block; /* Forces buttons to stack vertically */
+  width: fit-content; /* Only as wide as the text, not "full screen" */
+  margin-bottom: 10px;
+}
+
+#user-list-container #user-list-toggle {
+  display: none;
 }
 
 /* === Shared Forms/Input Styles === */
@@ -343,7 +354,28 @@ li a {
   }
 
   .watchparty #user-list-container {
-    display: none;
+    display: block;
+    order: -1;
+    width: 100%;
+    max-height: 60px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: max-height 0.3s ease-in-out;
+  }
+
+  .watchparty #user-list-container.expanded {
+    max-height: 1000px;
+  }
+
+  .watchparty #user-list-container #user-list-toggle {
+    display: block;
+    width: 100%; /* The toggle bar should be full width on mobile */
+  }
+
+  .watchparty #user-list-container h3 {
+    display: block;
+    margin-top: 15px;
+    text-align: left;
   }
 
   .watchparty #room-title {
@@ -375,8 +407,42 @@ li a {
 }
 
 @media (max-width: 750px) {
+  body {
+    padding: 10px;
+    height: auto;
+  }
+
+  #page-container {
+    flex-direction: column;
+    height: auto;
+    align-items: stretch;
+  }
+
   #user-list-container {
-    display: none;
+    display: block;
+    order: -1;
+    width: 100%;
+    flex: none;
+    max-height: 60px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    cursor: default;
+    transition: max-height 0.3s ease-in-out;
+  }
+
+  #user-list-container.expanded {
+    max-height: 1200px;
+  }
+
+  #user-list-container #user-list-toggle {
+    display: block;
+    width: 100%; /* The toggle bar should be full width on mobile */
+  }
+
+  #user-list-container h3 {
+    display: block;
+    margin-top: 15px;
+    text-align: left;
   }
 }
 

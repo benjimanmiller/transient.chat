@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 🗣️ Autoplay Toggle
     const autoplayToggleBtn = document.createElement("button");
+    autoplayToggleBtn.id = "autoplay-toggle";
     // Insert after external toggle
     if (externalToggleBtn && externalToggleBtn.parentNode) {
         externalToggleBtn.parentNode.insertBefore(autoplayToggleBtn, externalToggleBtn.nextSibling);
@@ -114,6 +115,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     updateExternalToggleBtn(); // Reset style on load
+
+    // Mobile Toggle for User List & Settings
+    const userListContainer = document.getElementById("user-list-container");
+    if (userListContainer) {
+        const toggleBtn = document.createElement("button");
+        toggleBtn.id = "user-list-toggle";
+        toggleBtn.textContent = "Show Users & Settings";
+        userListContainer.prepend(toggleBtn);
+
+        toggleBtn.addEventListener("click", () => {
+            const isExpanded = userListContainer.classList.toggle("expanded");
+            toggleBtn.textContent = isExpanded ? "Hide Users & Settings" : "Show Users & Settings";
+        });
+    }
 
     soundToggleBtn.addEventListener("click", () => {
         soundEnabled = !soundEnabled;
