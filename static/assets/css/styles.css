@@ -5,7 +5,7 @@
 
 body {
   margin: 0;
-  padding: 20px;
+  padding: 10px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #1e1e1e;
   color: #ffffff;
@@ -21,7 +21,7 @@ h2,
 h3 {
   color: #ffffff;
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 /* === Layout Containers === */
@@ -38,10 +38,10 @@ h3 {
   align-items: flex-start;
   width: 100%;
   max-width: 1200px;
-  padding: 0 15px;
-  margin-top: 20px;
+  padding: 0 8px;
+  margin-top: 5px;
   flex-wrap: nowrap;
-  gap: 20px;
+  gap: 10px;
   height: 100%;
   flex: 1;
   height: calc(100vh - 100px);
@@ -64,7 +64,7 @@ h3 {
 }
 
 .title-row img {
-  height: 100px; 
+  height: 60px; 
   margin-right: 15px;
 }
 
@@ -73,7 +73,7 @@ h3 {
 #messages {
   background-color: #2e2e2e;
   border: 1px solid #444;
-  padding: 15px;
+  padding: 8px;
   border-radius: 8px;
   width: 100%;
   height: 400px;
@@ -87,13 +87,13 @@ h3 {
 
 #messages .message {
   line-height: 1.5em;
-  padding: 12px 16px;
+  padding: 4px 10px;
   word-wrap: break-word;
   background-color: #3d3d3d;
   color: #f0f0f0;
-  border-radius: 16px;
-  margin-bottom: 10px;
-  max-width: 70%;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  max-width: 90%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -107,7 +107,7 @@ h3 {
 /* === Chat Input Form === */
 #chat-form {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   width: 100%;
   margin-top: 10px;
 }
@@ -130,8 +130,12 @@ h3 {
 }
 
 button {
-  height: 42px;
-  padding: 0 16px;
+  min-height: 36px;
+  height: auto;
+  padding: 4px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   /* horizontal only */
   font-weight: bold;
   font-size: 14px;
@@ -154,7 +158,7 @@ button:hover {
   background-color: #2a2a2a;
   border: 1px solid #444;
   border-radius: 8px;
-  padding: 15px;
+  padding: 8px;
   height: fit-content;
   transition: max-height 0.3s ease-in-out;
 }
@@ -173,7 +177,7 @@ button:hover {
 #user-list-container > button {
   display: block; /* Forces buttons to stack vertically */
   width: fit-content; /* Only as wide as the text, not "full screen" */
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 #user-list-container #user-list-toggle {
@@ -357,24 +361,38 @@ li a {
     display: block;
     order: -1;
     width: 100%;
-    max-height: 60px;
+    max-height: 38px;
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    padding: 0;
     transition: max-height 0.3s ease-in-out;
   }
 
   .watchparty #user-list-container.expanded {
     max-height: 1000px;
+    padding-bottom: 10px;
   }
 
   .watchparty #user-list-container #user-list-toggle {
     display: block;
     width: 100%; /* The toggle bar should be full width on mobile */
+    margin-bottom: 0;
+    border-radius: 7px 7px 0 0;
+  }
+
+  .watchparty #user-list-container.expanded #user-list-toggle {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #444;
+  }
+
+  .watchparty #user-list-container > *:not(#user-list-toggle) {
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .watchparty #user-list-container h3 {
     display: block;
-    margin-top: 15px;
+    margin-top: 10px;
     text-align: left;
   }
 
@@ -423,25 +441,39 @@ li a {
     order: -1;
     width: 100%;
     flex: none;
-    max-height: 60px;
+    max-height: 38px;
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    padding: 0;
     cursor: default;
     transition: max-height 0.3s ease-in-out;
   }
 
   #user-list-container.expanded {
     max-height: 1200px;
+    padding-bottom: 10px;
   }
 
   #user-list-container #user-list-toggle {
     display: block;
     width: 100%; /* The toggle bar should be full width on mobile */
+    margin-bottom: 0;
+    border-radius: 7px 7px 0 0;
+  }
+
+  #user-list-container.expanded #user-list-toggle {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #444;
+  }
+
+  #user-list-container > *:not(#user-list-toggle) {
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   #user-list-container h3 {
     display: block;
-    margin-top: 15px;
+    margin-top: 10px;
     text-align: left;
   }
 }
@@ -500,9 +532,10 @@ li a {
 /* Make buttons in lists smaller/neater */
 #roomList button,
 #userList button {
-  height: 32px;
+  min-height: 32px;
+  height: auto;
   font-size: 12px;
-  padding: 0 12px;
+  padding: 4px 12px;
 }
 
 #bulkInput {
