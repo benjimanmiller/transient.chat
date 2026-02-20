@@ -67,8 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const micBtn = document.createElement("button");
     micBtn.textContent = "🎤";
     micBtn.type = "button";
-    micBtn.style.marginLeft = "0.5em";
-    micBtn.style.marginRight = "0.5em";
+    micBtn.className = "mic-button";
     micBtn.title = "Hold to record (max 15s)";
     
     // Insert mic button after input (between input and send button)
@@ -97,13 +96,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     let autoplayEnabled = localStorage.getItem("autoplayEnabled") !== "false"; // default true
 
     soundToggleBtn.textContent = soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off";
-    soundToggleBtn.style.backgroundColor = soundEnabled ? "" : "gray";
+    soundToggleBtn.classList.toggle("toggle-off", !soundEnabled);
 
     const updateAutoplayToggleBtn = () => {
         autoplayToggleBtn.textContent = autoplayEnabled
             ? "🗣️ Autoplay: On"
             : "🔇 Autoplay: Off";
-        autoplayToggleBtn.style.backgroundColor = autoplayEnabled ? "" : "gray";
+        autoplayToggleBtn.classList.toggle("toggle-off", !autoplayEnabled);
     };
     updateAutoplayToggleBtn();
 
@@ -111,7 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         externalToggleBtn.textContent = externalContentEnabled
             ? "🖥️ External Content: On"
             : "🔒 External Content: Off";
-        externalToggleBtn.style.backgroundColor = externalContentEnabled ? "" : "gray";
+        externalToggleBtn.classList.toggle("toggle-off", !externalContentEnabled);
     };
 
     updateExternalToggleBtn(); // Reset style on load
@@ -134,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         soundEnabled = !soundEnabled;
         localStorage.setItem("soundEnabled", soundEnabled); // ✅ Persist
         soundToggleBtn.textContent = soundEnabled ? "🔊 Sound: On" : "🔇 Sound: Off";
-        soundToggleBtn.style.backgroundColor = soundEnabled ? "" : "gray";
+        soundToggleBtn.classList.toggle("toggle-off", !soundEnabled);
     });
 
     externalToggleBtn.addEventListener("click", () => {
@@ -167,12 +166,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             mediaRecorder = new MediaRecorder(stream, options);
             audioChunks = [];
             isRecording = true;
-            micBtn.style.backgroundColor = "red";
+            micBtn.classList.add("recording");
             micBtn.textContent = "⏹️";
 
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
             mediaRecorder.onstop = () => {
-                micBtn.style.backgroundColor = "";
+                micBtn.classList.remove("recording");
                 micBtn.textContent = "🎤";
                 isRecording = false;
                 clearTimeout(recordingTimeout);
@@ -411,7 +410,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (isOwner && user !== username) {
                 const btn = document.createElement("button");
                 btn.textContent = "Kick";
-                btn.style.marginLeft = "0.5em";
+                btn.className = "kick-button";
                 btn.onclick = async () => {
                     if (confirm(`Kick ${user}?`)) {
                         await fetch(`/chat/${encodeURIComponent(room)}/kick`, {
@@ -462,11 +461,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (msg.audio) {
                 const audioContainer = document.createElement("div");
-                audioContainer.style.marginTop = "0.25em";
+                audioContainer.className = "audio-container";
                 const audio = document.createElement("audio");
                 audio.controls = true;
-                audio.style.height = "30px";
-                audio.style.maxWidth = "100%";
+                audio.className = "voice-message-audio";
                 
                 audio.src = msg.audio;
 

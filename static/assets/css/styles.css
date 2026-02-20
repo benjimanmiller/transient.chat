@@ -31,32 +31,6 @@ h3 {
   padding: 0 15px;
 }
 
-/* === Chat Room Layout === */
-#page-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100%;
-  max-width: 1200px;
-  padding: 0 8px;
-  margin-top: 5px;
-  flex-wrap: nowrap;
-  gap: 10px;
-  height: 100%;
-  flex: 1;
-  height: calc(100vh - 100px);
-}
-
-#chat-center {
-  flex: 1 1 700px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  max-height: 100%;
-}
-
 .title-row {
   display: flex;
   align-items: center;
@@ -68,50 +42,6 @@ h3 {
   margin-right: 15px;
 }
 
-
-/* === Messages === */
-#messages {
-  background-color: #2e2e2e;
-  border: 1px solid #444;
-  padding: 8px;
-  border-radius: 8px;
-  width: 100%;
-  height: 400px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  height: auto;
-  max-height: calc(100vh - 205px);
-}
-
-#messages .message {
-  line-height: 1.5em;
-  padding: 4px 10px;
-  word-wrap: break-word;
-  background-color: #3d3d3d;
-  color: #f0f0f0;
-  border-radius: 10px;
-  margin-bottom: 4px;
-  max-width: 90%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-#messages .my-message {
-  align-self: flex-end;
-  background-color: #18794e;
-  text-align: right;
-  color: #fff;
-}
-
-/* === Chat Input Form === */
-#chat-form {
-  display: flex;
-  gap: 6px;
-  width: 100%;
-  margin-top: 10px;
-}
-
 #message-input {
   flex: 1;
   background-color: #1a1a1a;
@@ -120,13 +50,6 @@ h3 {
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
-}
-
-#message-input.inputfield {
-  height: 42px;
-  padding: 0 12px;
-  /* horizontal padding only */
-  line-height: 1;
 }
 
 button {
@@ -149,39 +72,6 @@ button {
 
 button:hover {
   background-color: #1e7cc9;
-}
-
-/* === User List Sidebar === */
-#user-list-container {
-  flex: 0 1 230px;
-  min-width: 180px;
-  background-color: #2a2a2a;
-  border: 1px solid #444;
-  border-radius: 8px;
-  padding: 8px;
-  height: fit-content;
-  transition: max-height 0.3s ease-in-out;
-}
-
-#user-list-container h3 {
-  margin-top: 0;
-  font-size: 16px;
-}
-
-#user-list div {
-  padding: 5px 0;
-  color: #ccc;
-  border-bottom: 1px solid #333;
-}
-
-#user-list-container > button {
-  display: block; /* Forces buttons to stack vertically */
-  width: fit-content; /* Only as wide as the text, not "full screen" */
-  margin-bottom: 4px;
-}
-
-#user-list-container #user-list-toggle {
-  display: none;
 }
 
 /* === Shared Forms/Input Styles === */
@@ -285,8 +175,7 @@ a:visited {
 #new-room-name,
 #message-input,
 #new-watchparty-name,
-#video-url-input,
-#broadcastInput {
+#video-url-input {
   background-color: #ffffff;
   color: #444;
 }
@@ -298,254 +187,7 @@ li a {
   text-decoration: underline;
 }
 
-.watchparty #video-chat-container {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  width: 100%;
-  max-width: 2400px;
-  margin-top: 20px;
-}
-
-.watchparty #video-section {
-  flex: 2;
-  max-width: 1200px;
-}
-
-.watchparty #chat-center {
-  flex: 1.2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 800px;
-}
-
-/* Ensure video controls look clean */
-.watchparty #video-controls {
-  margin-bottom: 15px;
-  width: 100%;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.watchparty #video-iframe {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 1080px;
-  border-radius: 8px;
-  display: block;
-  height: auto;
-}
-
-@media (max-width: 950px) {
-  .watchparty #video-chat-container {
-    flex-direction: column;
-  }
-
-  .watchparty #video-iframe {
-    aspect-ratio: auto;
-    /* Disable aspect ratio for small screens */
-    height: 420px;
-    /* Fixed height */
-    max-height: none;
-    /* Remove previous cap */
-  }
-
-  .watchparty #video-section,
-  .watchparty #chat-center {
-    max-width: 100%;
-  }
-
-  .watchparty #user-list-container {
-    display: block;
-    order: -1;
-    width: 100%;
-    max-height: 38px;
-    overflow: hidden;
-    margin-bottom: 10px;
-    padding: 0;
-    transition: max-height 0.3s ease-in-out;
-  }
-
-  .watchparty #user-list-container.expanded {
-    max-height: 1000px;
-    padding-bottom: 10px;
-  }
-
-  .watchparty #user-list-container #user-list-toggle {
-    display: block;
-    width: 100%; /* The toggle bar should be full width on mobile */
-    margin-bottom: 0;
-    border-radius: 7px 7px 0 0;
-  }
-
-  .watchparty #user-list-container.expanded #user-list-toggle {
-    margin-bottom: 10px;
-    border-bottom: 1px solid #444;
-  }
-
-  .watchparty #user-list-container > *:not(#user-list-toggle) {
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-
-  .watchparty #user-list-container h3 {
-    display: block;
-    margin-top: 10px;
-    text-align: left;
-  }
-
-  .watchparty #room-title {
-    display: none;
-  }
-
-  .watchparty body {
-    padding: 10px;
-    height: auto;
-  }
-
-  .watchparty #chat-center {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .watchparty #messages {
-    max-height: calc(100vh - 550px);
-    /* Adjust as needed */
-    min-height: 150px;
-    overflow-y: auto;
-  }
-
-  .watchparty #chat-form {
-    margin-top: 10px;
-  }
-}
-
-@media (max-width: 750px) {
-  body {
-    padding: 10px;
-    height: auto;
-  }
-
-  #page-container {
-    flex-direction: column;
-    height: auto;
-    align-items: stretch;
-  }
-
-  #user-list-container {
-    display: block;
-    order: -1;
-    width: 100%;
-    flex: none;
-    max-height: 38px;
-    overflow: hidden;
-    margin-bottom: 10px;
-    padding: 0;
-    cursor: default;
-    transition: max-height 0.3s ease-in-out;
-  }
-
-  #user-list-container.expanded {
-    max-height: 1200px;
-    padding-bottom: 10px;
-  }
-
-  #user-list-container #user-list-toggle {
-    display: block;
-    width: 100%; /* The toggle bar should be full width on mobile */
-    margin-bottom: 0;
-    border-radius: 7px 7px 0 0;
-  }
-
-  #user-list-container.expanded #user-list-toggle {
-    margin-bottom: 10px;
-    border-bottom: 1px solid #444;
-  }
-
-  #user-list-container > *:not(#user-list-toggle) {
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-
-  #user-list-container h3 {
-    display: block;
-    margin-top: 10px;
-    text-align: left;
-  }
-}
-
-/* === Admin Panel === */
-#serverStats {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 15px;
-  width: 100%;
-  max-width: 1000px;
-  margin-bottom: 30px;
-  background-color: #2a2a2a;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #444;
-  flex-wrap: wrap;
-}
-
-#serverStats > div {
-  background-color: #3d3d3d;
-  padding: 15px 20px;
-  border-radius: 6px;
-  min-width: 120px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  flex: 1;
-}
-
-#roomList,
-#userList,
-#bannedList {
-  width: 100%;
-  max-width: 1000px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-left: 0; /* Override collapsible default */
-}
-
-#roomList > div,
-#userList > div,
-#bannedList > div {
-  background-color: #2a2a2a;
-  border: 1px solid #444;
-  padding: 12px 15px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-/* Make buttons in lists smaller/neater */
-#roomList button,
-#userList button {
-  min-height: 32px;
-  height: auto;
-  font-size: 12px;
-  padding: 4px 12px;
-}
-
-#bulkInput {
-  width: 100%;
-  max-width: 600px;
-  background-color: #ffffff;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 10px;
-  font-family: monospace;
-  margin-bottom: 10px;
+/* === Utilities === */
+.hidden {
+  display: none !important;
 }

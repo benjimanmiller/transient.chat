@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Transient.chat - Watch Party</title>
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/chat.css" />
+    <link rel="stylesheet" href="/assets/css/watchparty.css" />
     <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
   </head>
   <body class="watchparty">
@@ -20,9 +22,9 @@
             placeholder="Paste YouTube video URL..."
           />
           <button id="start-video-button">▶️ Play</button>
-          <button id="pause-video-button" style="display: none">⏸ Pause</button>
-          <button id="resume-video-button" style="display: none">▶ Resume</button>
-          <button id="clear-video-button" style="display: none">
+          <button id="pause-video-button" class="hidden">⏸ Pause</button>
+          <button id="resume-video-button" class="hidden">▶ Resume</button>
+          <button id="clear-video-button" class="hidden">
             🛑 Clear Video
           </button>
         </div>
@@ -33,12 +35,12 @@
             frameborder="0"
             allowfullscreen
             allow="autoplay; encrypted-media"
-            style="display: none"
+            class="hidden"
           ></iframe>
           <img
             id="paused-overlay"
             src="/assets/images/paused.png"
-            style="display: none; width: 100%; height: 100%; object-fit: contain; background: #000;"
+            class="hidden"
           />
         </div>
       </div>

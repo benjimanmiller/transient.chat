@@ -40,44 +40,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     function loadYouTubeVideo(videoId, startSeconds = 0) {
         if (lastVideoId === videoId) return;
         iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&start=${startSeconds}`;
-        iframe.style.display = "block";
+        iframe.classList.remove("hidden");
         lastVideoId = videoId;
     }
 
     function clearVideoUI() {
         iframe.src = "";
-        iframe.style.display = "none";
+        iframe.classList.add("hidden");
         videoExpireAt = null;
         videoStarted = false;
         lastVideoId = null;
-        pausedOverlay.style.display = "none";
+        pausedOverlay.classList.add("hidden");
         updateControlVisibility({ hasVideo: false, isPaused: false, isOwner: isRoomOwner });
     }
 
     function updateControlVisibility({ hasVideo, isPaused, isOwner }) {
         if (isOwner) {
             if (hasVideo) {
-                videoInput.style.display = "none";
-                videoButton.style.display = "none";
-                clearButton.style.display = "inline-block";
+                videoInput.classList.add("hidden");
+                videoButton.classList.add("hidden");
+                clearButton.classList.remove("hidden");
 
                 if (isPaused) {
-                    pauseButton.style.display = "none";
-                    resumeButton.style.display = "inline-block";
+                    pauseButton.classList.add("hidden");
+                    resumeButton.classList.remove("hidden");
                 } else {
-                    pauseButton.style.display = "inline-block";
-                    resumeButton.style.display = "none";
+                    pauseButton.classList.remove("hidden");
+                    resumeButton.classList.add("hidden");
                 }
             } else {
-                videoInput.style.display = "inline-block";
-                videoButton.style.display = "inline-block";
-                clearButton.style.display = "none";
-                pauseButton.style.display = "none";
-                resumeButton.style.display = "none";
+                videoInput.classList.remove("hidden");
+                videoButton.classList.remove("hidden");
+                clearButton.classList.add("hidden");
+                pauseButton.classList.add("hidden");
+                resumeButton.classList.add("hidden");
             }
-            videoControls.style.display = "block";
+            videoControls.classList.remove("hidden");
         } else {
-            videoControls.style.display = "none";
+            videoControls.classList.add("hidden");
         }
     }
 
@@ -166,10 +166,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             if (is_paused) {
-                if (iframe.style.display !== "none") {
-                    iframe.style.display = "none";
+                if (!iframe.classList.contains("hidden")) {
+                    iframe.classList.add("hidden");
                     iframe.src = ""; // Stop audio
-                    pausedOverlay.style.display = "block";
+                    pausedOverlay.classList.remove("hidden");
                     lastVideoId = null; // Force reload on resume
                 }
                 videoStarted = true;
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            pausedOverlay.style.display = "none";
+            pausedOverlay.classList.add("hidden");
             const duration = await fetchYouTubeDuration(videoId);
             videoExpireAt = Date.now() + ((duration - elapsed) * 1000);
             videoStarted = true;
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             updateControlVisibility({ hasVideo: true, isPaused: false, isOwner: isRoomOwner });
         } catch (err) {
             // Fallback: video was likely cleared
-            if (videoStarted || iframe.style.display !== "none") {
+            if (videoStarted || !iframe.classList.contains("hidden")) {
                 clearVideoUI();
             }
         }
