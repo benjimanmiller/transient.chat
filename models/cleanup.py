@@ -16,7 +16,7 @@ def cleanup_loop():
     while True:
         # Remove chat messages older than 1 hour
         message_cutoff = datetime.utcnow() - timedelta(hours=1)
-        for room, room_messages in messages.items():
+        for room, room_messages in list(messages.items()):
             messages[room] = [
                 msg
                 for msg in room_messages
@@ -54,6 +54,12 @@ def cleanup_loop():
         time.sleep(60)  # Run every 60 seconds
 
 
+_cleanup_thread_started = False
+
 def start_cleanup_thread():
+    global _cleanup_thread_started
+    if _cleanup_thread_started:
+        return
+    _cleanup_thread_started = True
     thread = threading.Thread(target=cleanup_loop, daemon=True)
     thread.start()
